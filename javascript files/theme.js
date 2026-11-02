@@ -1,4 +1,4 @@
-// Restore light/dark mode and color palette before paint, then connect the page controls. These preferences use their own localStorage entries.
+// Apply a browser fallback before paint; authenticated profile preferences then restore the correct user settings.
 // Apply the theme before the page appears, then connect the header toggle.
 const themeKey = 'insert-name-theme';
 let currentTheme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -27,15 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
   palettePicker.value = currentPalette;
   palettePicker.addEventListener('change', () => {
     currentPalette = palettePicker.value;
+    window.BudgetronSession?.savePreferences({palette:currentPalette});
     document.documentElement.dataset.palette = currentPalette;
-    try { localStorage.setItem(paletteKey, currentPalette); }
+    try { if(!window.BudgetronSession?.ready)localStorage.setItem(paletteKey, currentPalette); }
     catch { /* Palette changes remain usable for this page. */ }
   });
   themeToggle.addEventListener('click', () => {
     currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    window.BudgetronSession?.savePreferences({theme:currentTheme});
     document.documentElement.dataset.theme = currentTheme;
     updateToggle();
-    try { localStorage.setItem(themeKey, currentTheme); }
+    try { if(!window.BudgetronSession?.ready)localStorage.setItem(themeKey, currentTheme); }
     catch { /* Theme changes remain usable for this page. */ }
   });
 });
@@ -81,4 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (motionPreference.matches) highlight.getAnimations().forEach(animation=>animation.cancel());
     placeHighlight();
   });
+});
+
+
+// The session restores account-owned settings before revealing profile content.
+window.addEventListener('budgetron:preferences',event=>{
+  const preferences=event.detail;
+  currentTheme=preferences.theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):preferences.theme;
+  currentPalette=preferences.palette;
+  document.documentElement.dataset.theme=currentTheme;document.documentElement.dataset.palette=currentPalette;
+  const toggle=document.getElementById('theme-toggle'),picker=document.getElementById('color-theme');
+  if(toggle){toggle.setAttribute('aria-pressed',String(currentTheme==='dark'));toggle.title=currentTheme==='dark'?'Switch to Light Mode':'Switch to Dark Mode';}
+  if(picker)picker.value=currentPalette;
 });

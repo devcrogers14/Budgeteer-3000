@@ -1211,3 +1211,11 @@ input[type="color"] { min-height:44px; }
 .overview-donut { display:block; width:min(100%,380px); height:auto; margin:0 auto; overflow:visible; }
 .chart-categories button { overflow-wrap:anywhere; }
 @media(max-width:900px) { .two-column { grid-template-columns:1fr; } }
+
+/* Narrow phones need action headings to wrap instead of widening the whole page. */
+@media(max-width:760px) { .section-title { flex-wrap:wrap; } }
+@media(max-width:380px) {
+  .summary { gap:8px; }
+  .summary > div { padding:14px 10px; }
+  .summary strong { font-size:17px; }
+}

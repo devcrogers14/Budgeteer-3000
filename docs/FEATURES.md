@@ -38,4 +38,12 @@ Cream, Sage, Ocean and Rose palettes, Dark Mode, simple page-entry motion and th
 
 Signed-in users can chat with Gemini after adding a private API key to `.env`. Obvious unrelated questions are refused locally without Gemini quota. Uncertain requests reach Gemini and then pass through the structured-response scope filter. Included budget context is built from the authenticated profile's saved data, rather than trusting a submitted snapshot. The model cannot edit records or move money. Live Gemini answers were not used for verification.
 
-See [TESTING.md](TESTING.md) for the 39 automated checks and [PRESENTATION.md](PRESENTATION.md) for the demo walkthrough.
+See [TESTING.md](TESTING.md) for the 47 automated checks and [PRESENTATION.md](PRESENTATION.md) for the demo walkthrough.
+
+## Persistence verified November 1, 2026
+
+Budgets, categories, goals, theme/palette, chat position, Home-only visibility, budget-sharing choice and the last 14 chat messages persist per account. A fresh-browser sign-in after a server restart restores them. New users do not inherit another profile's settings. New Chat clears saved history; resetting budget data does not reset settings.
+
+Navigation/sign-out wait for real pending writes, and the browser warns before closing/reloading unsaved changes. Preferences are validated and updated separately from ledger revisions, so a theme change cannot replace budget data. Ordinary page changes keep normal navigation and the lightweight animations.
+
+All eight page folders contain their own matching HTML/JS/CSS; index.html remains at the project root. See [QA-REPORT.md](QA-REPORT.md) for the site audit and [CHANGELOG.md](CHANGELOG.md) for version differences.

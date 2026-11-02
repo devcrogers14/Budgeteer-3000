@@ -20,6 +20,30 @@ Navigation is **Home, Goals, Income, Expenses, Pie Chart, Transactions, Calendar
 
 See [FEATURES.md](docs/FEATURES.md) for details. The calendar remains available alongside the income/expense ledgers.
 
+## Folder layout
+
+Each page owns its HTML, JavaScript and CSS together. Only the entry page stays at the root:
+
+```text
+index.html
+pages/
+  auth/           auth.html, auth.js, auth.css
+  home/           home.html, home.js, home.css
+  goals/          goals.html, goals.js, goals.css
+  income/         income.html, income.js, income.css
+  expenses/       expenses.html, expenses.js, expenses.css
+  spending-chart/ spending-chart.html, spending-chart.js, spending-chart.css
+  transactions/   transactions.html, transactions.js, transactions.css
+  calendar/       calendar.html, calendar.js, calendar.css
+javascript files/ shared scripts used by multiple pages
+css files/        shared theme, layout and chat styles
+server/           local APIs, authentication, preferences and AI policy
+tests/            automated checks
+docs/             features, tests, presentation, version notes and design references
+```
+
+See [VERSION.md](VERSION.md) for the current version and [CHANGELOG.md](docs/CHANGELOG.md) for what changed.
+
 ## Where the code lives
 
 | Folder/file | Purpose |
@@ -36,7 +60,7 @@ See [FEATURES.md](docs/FEATURES.md) for details. The calendar remains available 
 
 ## Local data and authentication limits
 
-Profiles are stored in `C:\Users\<your-user>\Codex\Work\Budgetron Data\users.json` by default, outside the repository. `BUDGETRON_DATA_DIR` can override the directory through the process environment. Passwords use salted scrypt hashes; session cookies are HttpOnly and SameSite=Strict. Sessions expire after 24 hours and do not survive server restarts, but users and budgets do. Budget revisions reject stale-tab saves instead of overwriting newer data. The server binds to localhost.
+Profiles are stored in `C:\Users\<your-user>\Codex\Work\Budgetron Data\users.json` by default, outside the repository. `BUDGETRON_DATA_DIR` can override the directory through the process environment. Passwords use salted scrypt hashes; session cookies are HttpOnly and SameSite=Strict. Sessions expire after 24 hours and do not survive server restarts, but users, budgets, settings and recent chat do. Budget revisions reject stale-tab saves instead of overwriting newer data. The server binds to localhost.
 
 This is local classroom authentication, not a deployed identity service. It has no email verification, password reset, or real banking integration. The presentation credentials are deliberately public dummy credentials. Keep real data out of the demo and exclude user databases and `.env` from shared packages.
 
@@ -48,4 +72,10 @@ Ask Budgetron remains draggable with mouse/touch and Alt+arrow keys. **Position 
 
 ## Tests
 
-Run `node --test` for all **39 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs` for the **23 budgeting/auth unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
+Run `node --test` for all **47 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs tests/preferences.test.mjs` for the **30 budgeting/auth/preferences unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
+
+## Saved settings
+
+Theme, palette, chat position, Home-only visibility, sharing choice and the last 14 chat messages are saved per user in the local profile database. They survive sign-out, a server restart, and a fresh browser on the same local server. **New Chat** clears saved chat history; **Reset profile** resets budget data but keeps settings. Older browser-only preferences are migrated once to an existing profile without making new users inherit them.
+
+Page links and sign-out wait for outstanding data/settings writes. Small writes use keepalive, and closing/reloading with unsaved work shows the browser's warning. Failed or stale saves show an error rather than overwriting another tab's newer data. Restart the Node server after installing this update so the preferences API is loaded.

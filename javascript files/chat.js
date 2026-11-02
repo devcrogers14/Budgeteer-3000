@@ -40,7 +40,8 @@
   document.body.append(moveHelp);
   // Remember launcher preferences independently of the demo budget.
   function saveDisplaySettings() {
-    try { localStorage.setItem(displaySettingsKey,JSON.stringify(displaySettings)); } catch { /* Keep preferences in memory for this page. */ }
+    window.BudgetronSession?.savePreferences({chat:{homeOnly:displaySettings.homeOnly,position:displaySettings.position}});
+    try { if(!window.BudgetronSession?.ready)localStorage.setItem(displaySettingsKey,JSON.stringify(displaySettings)); } catch { /* Keep preferences in memory for this page. */ }
   }
   // Ratios keep the preferred position usable across desktop and phone viewport sizes.
   // Compute usable movement space with a small margin around every viewport edge.
@@ -124,9 +125,9 @@
   placeLauncher();
 
   try{shareBudgetCheckbox.checked=sessionStorage.getItem('budgetron-share-budget')!=='false';}catch{}
-  shareBudgetCheckbox.addEventListener('change',()=>{try{sessionStorage.setItem('budgetron-share-budget',String(shareBudgetCheckbox.checked));}catch{}});
+  shareBudgetCheckbox.addEventListener('change',()=>{window.BudgetronSession?.savePreferences({chat:{shareBudget:shareBudgetCheckbox.checked}});try{if(!window.BudgetronSession?.ready)sessionStorage.setItem('budgetron-share-budget',String(shareBudgetCheckbox.checked));}catch{}});
   // Keep a bounded chat history within this browser tab across page navigation.
-  function persist(){try{sessionStorage.setItem(chatHistoryKey,JSON.stringify(conversationHistory.slice(-14)));}catch{}}
+  function persist(){window.BudgetronSession?.savePreferences({chatHistory:conversationHistory.slice(-14)});try{sessionStorage.setItem(chatHistoryKey,JSON.stringify(conversationHistory.slice(-14)));}catch{}}
   // Render simple bold/bullet formatting using text nodes rather than trusting AI-generated HTML.
   function formatText(container,text){
     for(const line of text.split('\n')){
@@ -204,6 +205,7 @@
   // Submit a question, display a pending reply and recover cleanly from connection/provider failures.
   async function ask(text,retry=false){
     text=text.trim();if(!text||isReplyPending)return;
+    try{await window.BudgetronSession?.flush();}catch{connectionStatus.textContent='Save your changes or refresh before asking about your budget.';return;}
     if(!await checkConnection())return;
     isReplyPending=true;sendButton.disabled=true;newChatButton.disabled=true;chatPanel.setAttribute('aria-busy','true');
     messageList.querySelector('.chat-welcome')?.remove();messageList.querySelectorAll('.chat-error').forEach(item=>item.remove());
@@ -232,5 +234,14 @@
   chatPanel.querySelector('#chat-form').addEventListener('submit',(event)=>{event.preventDefault();ask(messageInput.value);});
   messageInput.addEventListener('keydown',(event)=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();ask(messageInput.value);}});
   newChatButton.addEventListener('click',()=>{conversationHistory=[];persist();renderHistory();messageInput.focus();});
+  // Restore this profile's chat settings/history instead of inheriting another user's browser settings.
+  window.addEventListener('budgetron:preferences',event=>{
+    const preferences=event.detail;
+    displaySettings={homeOnly:preferences.chat.homeOnly,position:preferences.chat.position};
+    homeOnlyCheckbox.checked=displaySettings.homeOnly;shareBudgetCheckbox.checked=preferences.chat.shareBudget;
+    chatLauncher.hidden=displaySettings.homeOnly&&!isHomePage;
+    if(chatLauncher.hidden){chatPanel.hidden=true;chatLauncher.setAttribute('aria-expanded','false');}
+    conversationHistory=preferences.chatHistory||[];renderHistory();placeLauncher();
+  });
   renderHistory();
 })();

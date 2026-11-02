@@ -64,3 +64,16 @@ test('signup, budget saves, conflict rejection, isolation and sign-out work over
   await fetch(base+'/api/signout',{method:'POST',headers:{Cookie:cookie}});assert.equal((await fetch(base+'/api/session',{headers:{Cookie:cookie}})).status,401);
   assert.equal((await fetch(base+'/pages/home/home.html',{redirect:'manual'})).headers.get('location'),'/pages/auth/auth.html');
 });
+
+
+test('settings API persists partial updates and rejects anonymous, cross-site, wrong-user and malformed writes',async testContext=>{
+  const {base,request}=await setup(testContext);const session=await(await request('/api/session')).json();
+  assert.equal((await fetch(base+'/api/preferences')).status,401);
+  const patch=(body,origin)=>request('/api/preferences',{method:'PATCH',headers:{'Content-Type':'application/json',...(origin?{Origin:origin}:{})},body:JSON.stringify(body)});
+  assert.equal((await patch({userId:'wrong-user',patch:{theme:'dark'}})).status,409);
+  assert.equal((await patch({userId:session.user.id,patch:{theme:'dark'}},'http://other.example')).status,403);
+  assert.equal((await patch({userId:session.user.id,patch:{theme:'invalid'}})).status,400);
+  assert.equal((await patch({userId:session.user.id,patch:{theme:'dark',chat:{homeOnly:true}}})).status,200);
+  assert.equal((await patch({userId:session.user.id,patch:{palette:'ocean',chat:{shareBudget:false}}})).status,200);
+  const restored=await(await request('/api/session')).json();assert.equal(restored.preferences.theme,'dark');assert.equal(restored.preferences.palette,'ocean');assert.equal(restored.preferences.chat.homeOnly,true);assert.equal(restored.preferences.chat.shareBudget,false);assert.equal(restored.revision,session.revision);assert.deepEqual(restored.budget.events,session.budget.events);
+});

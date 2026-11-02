@@ -75,7 +75,7 @@ export function createBudgetronServer({generateReply=generateGeminiReply,loadSet
       if (!/^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host)) return sendJson(403,{error:'This demo server is local-only.'});
       const url=new URL(request.url,`http://${host}`);
       // All writes require same-origin requests; budget/profile APIs require an HttpOnly session.
-      if(['POST','PUT','DELETE'].includes(request.method)&&request.headers.origin&&request.headers.origin!==`http://${host}`)return sendJson(403,{error:'Use the Budgetron website for this request.'});
+      if(['POST','PUT','PATCH','DELETE'].includes(request.method)&&request.headers.origin&&request.headers.origin!==`http://${host}`)return sendJson(403,{error:'Use the Budgetron website for this request.'});
       if(['/api/signup','/api/signin'].includes(url.pathname)){
         if(request.method!=='POST')return sendJson(405,{error:'Use POST.'});
         const now=Date.now();while(loginAttempts.length&&loginAttempts[0]<now-60000)loginAttempts.shift();
@@ -87,9 +87,14 @@ export function createBudgetronServer({generateReply=generateGeminiReply,loadSet
       if(url.pathname==='/api/signout'){
         if(request.method!=='POST')return sendJson(405,{error:'Use POST.'});response.setHeader('Set-Cookie',users.signout(request.headers.cookie));return sendJson(200,{ok:true});
       }
-      if(['/api/session','/api/budget'].includes(url.pathname)){
+      if(['/api/session','/api/budget','/api/preferences'].includes(url.pathname)){
         const user=users.current(request.headers.cookie);if(!user)return sendJson(401,{error:'Sign in to continue.'});
-        if(request.method==='GET')return sendJson(200,{user:users.publicUser(user),...users.readBudget(user)});
+        if(request.method==='GET')return sendJson(200,{user:users.publicUser(user),...users.readBudget(user),preferences:users.readPreferences(user)});
+        if(url.pathname==='/api/preferences'&&request.method==='PATCH'){
+          const body=await readJson(request);
+          if(body?.userId!==user.id)return sendJson(409,{error:'Your signed-in user changed. Refresh this page.'});
+          try{return sendJson(200,{preferences:users.savePreferences(user,body?.patch)});}catch(error){return sendJson(400,{error:error.message});}
+        }
         if(url.pathname==='/api/budget'&&request.method==='PUT'){
           const body=await readJson(request);
           if(body?.userId!==user.id)return sendJson(409,{error:'Your signed-in user changed. Refresh this page.'});
