@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Sign-in and registration entry point; all credentials go to the local server. -->
+<!-- Sign-in and registration for browser-only profiles or server-backed profiles. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -9,12 +9,15 @@
     </title>
     <link rel="stylesheet" href="../../css%20files/styles.css">
     <link rel="stylesheet" href="auth.css">
+    <script src="../../javascript%20files/budget-core.js" defer></script>
+    <script src="../../javascript%20files/preferences.js" defer></script>
+    <script src="../../javascript%20files/browser-accounts.js" defer></script>
     <script src="auth.js" defer>
     </script>
   </head>
   <body class="auth-page">
     <main>
-      <a class="brand" href="/">
+      <a class="brand" href="../../index.html">
         Budgetron 3000™
       </a>
       <article class="panel">
@@ -64,7 +67,7 @@
         </button>
       </article>
       <p class="small">
-        Local classroom prototype. Run Start Budgetron.bat; accounts are saved on this computer.
+        Local classroom prototype. Double-click index.html to use browser-saved accounts. Run Start Budgetron.bat for AI chat and separate server-saved accounts.
       </p>
     </main>
   </body>

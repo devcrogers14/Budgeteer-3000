@@ -1,4 +1,4 @@
-// Account-owned budgets and preferences. HttpOnly cookies authenticate every save; passwords stay out of browser storage.
+// Account-owned budgets and settings: browser-only storage for file mode, authenticated API storage for server mode.
 let signedInUser=null,budgetRevision=0;
 let budgetSaveQueue=Promise.resolve(),preferenceSaveQueue=Promise.resolve();
 let pendingBudgetSaves=0,pendingPreferenceSaves=0,lastSaveError=null,isSigningOut=false;
@@ -11,7 +11,7 @@ window.BudgetronSession={
     pendingBudgetSaves++;
     budgetSaveQueue=budgetSaveQueue.then(async()=>{
       const body=JSON.stringify({budget:snapshot,revision:budgetRevision,userId:signedInUser.id});
-      const response=await fetch('/api/budget',{method:'PUT',headers:{'Content-Type':'application/json'},body,keepalive:new TextEncoder().encode(body).length<60000});
+      const response=await BudgetronAccounts.request('/api/budget',{method:'PUT',headers:{'Content-Type':'application/json'},body,keepalive:new TextEncoder().encode(body).length<60000});
       const result=await response.json();if(!response.ok)throw new Error(result.error||'Could not save budget.');budgetRevision=result.revision;
     }).finally(()=>{pendingBudgetSaves--;});
     // A rejected budget queue stays blocked: stale data cannot overwrite a newer tab's changes.
@@ -23,7 +23,7 @@ window.BudgetronSession={
     pendingPreferenceSaves++;
     preferenceSaveQueue=preferenceSaveQueue.then(async()=>{
       const body=JSON.stringify({userId:signedInUser.id,patch});
-      const response=await fetch('/api/preferences',{method:'PATCH',headers:{'Content-Type':'application/json'},body,keepalive:new TextEncoder().encode(body).length<60000});
+      const response=await BudgetronAccounts.request('/api/preferences',{method:'PATCH',headers:{'Content-Type':'application/json'},body,keepalive:new TextEncoder().encode(body).length<60000});
       const result=await response.json();if(!response.ok)throw new Error(result.error||'Could not save settings.');
     }).finally(()=>{pendingPreferenceSaves--;});
     preferenceSaveQueue.catch(showSaveError);return preferenceSaveQueue;
@@ -42,10 +42,9 @@ function initialPreferences(userId){
   return defaults;
 }
 (async()=>{
-  if(location.protocol==='file:'){document.documentElement.dataset.session='offline';document.body.replaceChildren();const note=document.createElement('main');note.textContent='Run Start Budgetron.bat and open http://127.0.0.1:3000 for sign-in and saved user budgets.';document.body.append(note);return;}
   try{
-    const response=await fetch('/api/session',{cache:'no-store'});
-    if(response.status===401){location.replace('/Pages/Sign In Page/auth.html');return;}
+    const response=await BudgetronAccounts.request('/api/session',{cache:'no-store'});
+    if(response.status===401){location.replace(BudgetronAccounts.pageURL('Pages/Sign In Page/auth.html'));return;}
     if(!response.ok)throw new Error('Could not load your profile.');
     const result=await response.json();signedInUser=result.user;budgetData=result.budget;budgetRevision=result.revision;initializeGoals();
     window.BudgetronSession.ready=true;
@@ -59,8 +58,8 @@ function initialPreferences(userId){
       try{
         await Promise.allSettled([budgetSaveQueue,preferenceSaveQueue]);
         if(lastSaveError&&!confirm('Some changes could not be saved. Sign out anyway?'))return;
-        const response=await fetch('/api/signout',{method:'POST'});if(!response.ok)throw new Error('Could not sign out. Please try again.');
-        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');location.replace('/Pages/Sign In Page/auth.html');
+        const response=await BudgetronAccounts.request('/api/signout',{method:'POST'});if(!response.ok)throw new Error('Could not sign out. Please try again.');
+        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');location.replace(BudgetronAccounts.pageURL('Pages/Sign In Page/auth.html'));
       }catch(error){getElement('status').textContent=error.message;}
     });
   }catch(error){document.documentElement.dataset.session='ready';showSaveError(error);}

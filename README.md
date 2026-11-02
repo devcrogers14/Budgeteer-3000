@@ -1,10 +1,14 @@
 # Budgetron 3000 — Local budgeting app
 
-A plain HTML/CSS/JavaScript classroom app with local user accounts, income, expenses, goals, two spending/income charts, a calendar and optional Gemini chat.
+A plain HTML/CSS/JavaScript classroom app with browser-saved or server-saved user accounts, income, expenses, goals, two spending/income charts, a calendar and optional Gemini chat.
 
 ## Start the app
 
-Run **Start Budgetron.bat**, or run `node server/server.mjs` from the project root with Node.js 22 or newer. Open the printed local URL (normally http://127.0.0.1:3000). Keep the server window open. Authentication and saved user profiles require the local server; double-clicking HTML is no longer the sign-in workflow.
+For the presentation, extract the complete ZIP and double-click **index.html**. No installation, Node.js, API key or internet connection is needed for budgeting. Sign in with the demo credentials below or create a browser-only profile. Keep all folders beside index.html.
+
+For optional AI chat, run **Start Budgetron.bat** (Node.js 22 or newer required), then use the local website it opens, normally http://127.0.0.1:3000. Keep the batch window open. Add a Gemini key to the private .env file to enable AI replies.
+
+Browser-file mode and server mode use separate account stores. They do not automatically transfer profiles, transactions or settings between modes. The presentation account is available in both.
 
 ## Presentation account
 
@@ -53,12 +57,20 @@ See [VERSION.md](VERSION.md) for the current version and [CHANGELOG.md](docs/CHA
 | `javascript files/state.js`, `session.js`, `ui.js` | In-memory browser state, authenticated server persistence and shared controls. |
 | `javascript files/transactions.js`, `goals.js`, `charts.js` | Reusable entry editing, net-income goal UI and interactive SVG charts. |
 | `css files/` | Shared themes, layout, simple entry motion and draggable chat styling. |
+| `javascript files/browser-accounts.js` | Browser-only sign-in, salted password hashes and per-profile local storage; server requests pass through in HTTP mode. |
+| `javascript files/preferences.js` | Settings validation shared by browser and server stores. |
 | `server/auth.mjs` | Password hashing, session management and per-user budget storage. |
 | `server/server.mjs` | Local HTTP server, protected routes and Gemini proxy. |
 | `server/chat-policy.mjs` | Local quota-saving filter and trusted model scope rules. |
 | `tests/` | Unit, AI policy and authenticated HTTP integration checks. |
 
-## Local data and authentication limits
+## Browser-only data
+
+When opened as a file, Budgetron stores profiles, budgets, categories, goals, settings and recent chat history in this browser's local storage under `budgetron-browser-profiles-v1`. Passwords are salted PBKDF2-SHA-256 hashes (210,000 iterations), never raw passwords. A 24-hour sign-in marker lives in session storage; closing the browser may require signing in again. Saved profiles remain until browser data is cleared. Browser file storage behavior can vary; use the same browser and extracted folder, a regular window, and allow storage. File-mode behavior was verified in Brave.
+
+These are classroom profiles on a device you control, not secure multi-user authentication: someone with access to browser storage can inspect or change records. Browser profiles do not sync to another browser/computer or to the server. Existing server profiles are preserved.
+
+## Server data and authentication limits
 
 Profiles are stored in `C:\Users\<your-user>\Codex\Work\Budgetron Data\users.json` by default, outside the repository. `BUDGETRON_DATA_DIR` can override the directory through the process environment. Passwords use salted scrypt hashes; session cookies are HttpOnly and SameSite=Strict. Sessions expire after 24 hours and do not survive server restarts, but users, budgets, settings and recent chat do. Budget revisions reject stale-tab saves instead of overwriting newer data. The server binds to localhost.
 
@@ -72,10 +84,10 @@ Ask Budgetron remains draggable with mouse/touch and Alt+arrow keys. **Position 
 
 ## Tests
 
-Run `node --test` for all **49 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs tests/preferences.test.mjs` for the **30 budgeting/auth/preferences unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
+Run `node --test` for all **56 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs tests/preferences.test.mjs` for the **30 budgeting/auth/preferences unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
 
 ## Saved settings
 
-Theme, palette, chat position, Home-only visibility, sharing choice and the last 14 chat messages are saved per user in the local profile database. They survive sign-out, a server restart, and a fresh browser on the same local server. **New Chat** clears saved chat history; **Reset profile** resets budget data but keeps settings. Older browser-only preferences are migrated once to an existing profile without making new users inherit them.
+Theme, palette, chat position, Home-only visibility, sharing choice and the last 14 chat messages are saved per user in the active mode's storage. Browser-file profiles survive reload and sign-out in the same browser; server profiles also survive a server restart and sign-in from a fresh browser on that local server. **New Chat** clears saved chat history; **Reset profile** resets budget data but keeps settings. Older browser-only preferences are migrated once to an existing profile without making new users inherit them.
 
 Page links and sign-out wait for outstanding data/settings writes. Small writes use keepalive, and closing/reloading with unsaved work shows the browser's warning. Failed or stale saves show an error rather than overwriting another tab's newer data. Restart the Node server after installing this update so the preferences API is loaded.

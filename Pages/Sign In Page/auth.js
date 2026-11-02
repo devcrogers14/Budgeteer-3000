@@ -5,6 +5,9 @@ document.getElementById('auth-switch').addEventListener('click',()=>{createAccou
 document.getElementById('fill-demo').addEventListener('click',()=>{if(createAccount)document.getElementById('auth-switch').click();document.getElementById('auth-email').value='demo@budgetron.local';document.getElementById('auth-password').value='BudgetronDemo3000!';message.textContent='Demo credentials filled. Click Sign in to begin the presentation.';});
 form.addEventListener('submit',async event=>{
   event.preventDefault();submit.disabled=true;message.textContent='';
-  try{const response=await fetch(createAccount?'/api/signup':'/api/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('auth-name').value,email:document.getElementById('auth-email').value,password:document.getElementById('auth-password').value})});const result=await response.json();if(!response.ok)throw new Error(result.error);sessionStorage.removeItem('budgetron-chat-history-v1');location.assign('/Pages/Home Page/home.html');}
+  try{const response=await BudgetronAccounts.request(createAccount?'/api/signup':'/api/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('auth-name').value,email:document.getElementById('auth-email').value,password:document.getElementById('auth-password').value})});const result=await response.json();if(!response.ok)throw new Error(result.error);sessionStorage.removeItem('budgetron-chat-history-v1');location.assign(BudgetronAccounts.pageURL('Pages/Home Page/home.html'));}
   catch(error){message.textContent=error.message;}finally{submit.disabled=false;}
 });
+
+// Explain the storage choice at the point where users select an account.
+const storageNote=document.createElement('p');storageNote.className='small';storageNote.textContent=BudgetronAccounts.isBrowserOnly?'Browser mode: profiles stay in this browser. No installation or API key is needed. AI chat requires Start Budgetron.bat.':'AI/server mode: profiles are saved by the local server. Browser-file profiles are separate.';form.before(storageNote);

@@ -2,6 +2,14 @@
 
 Labels describe saved snapshots; F/W prototype labels are not original release numbers. Older code/ZIP files are preserved, with notes beside each school archive.
 
+## Enable browser-only budgeting with optional AI — November 2, 2026
+
+- Open index.html directly for budgeting, demo accounts, sign-up/sign-in/out, charts, goals, transactions and calendar without installation or an API key.
+- Save each browser profile's data and settings locally, hash passwords with salted PBKDF2 and reject invalid/stale saves.
+- Retain existing server profiles and optional server-only AI. Explain that browser-file/server stores are separate.
+- Share preference validation between both modes and use project-relative sign-in redirects.
+- Pass 56 automated tests and browser checks for file mode (zero HTTP requests) and server mode (simulated AI).
+
 ## File Reorganization — November 2, 2026
 
 - Rename the page root to Pages, with Sign In Page, Home Page, Goals Page, Income Page, Expenses Page, Pie Chart Page, Transactions Page and Calendar Page folders.

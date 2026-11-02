@@ -1,5 +1,9 @@
 # Verification
 
+## Browser-only presentation mode — November 2, 2026
+
+All 56 automated tests passed. A clean Brave browser opened index.html directly as a file and verified demo sign-in, every tab, UI income saving, reload persistence, theme/palette, signup, account isolation, sign-out/relogin and Home-only chat. No HTTP requests were made. A separate server browser check verified sign-in, a simulated AI answer and sign-out. Existing server data and live API keys were not used. Browser-file and server stores are separate.
+
 ## Page-folder reorganization — November 2, 2026
 
 All 49 automated tests passed after the move. A fresh browser smoke check verified sign-in, all seven navigation tabs, Home-only chat visibility and sign-out with no page errors or failed resources. Tests cover each page's linked assets, old bookmark redirects and sign-in protection. The browser check used an isolated in-memory demo account and no live Gemini calls.
