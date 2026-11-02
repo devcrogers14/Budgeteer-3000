@@ -9,6 +9,8 @@ import {createBudgetronServer} from '../server/server.mjs';
 import {createAuthStore,DEMO_USER} from '../server/auth.mjs';
 import {OFF_TOPIC_REPLY} from '../server/chat-policy.mjs';
 const root=new URL('../',import.meta.url);
+// Page folder names mirror the visible navigation labels.
+const pageFolders={"auth":"Sign In Page","home":"Home Page","goals":"Goals Page","income":"Income Page","expenses":"Expenses Page","spending-chart":"Pie Chart Page","transactions":"Transactions Page","calendar":"Calendar Page"};
 async function setup(testContext,overrides={}){
   let received;const store=createAuthStore();
   const server=createBudgetronServer({authStore:store,loadSettings:async()=>({configured:true,key:'test-only',model:'gemini-test'}),generateReply:async input=>{received=input;return 'Mock budget response';},...overrides});
@@ -22,7 +24,7 @@ async function setup(testContext,overrides={}){
 test('each authenticated page has its own assets and all links load',async testContext=>{
   const {request}=await setup(testContext);
   for(const page of ['home','goals','income','expenses','spending-chart','transactions','calendar','auth']){
-    const path=`pages/${page}/${page}.html`,response=await request('/'+path);assert.equal(response.status,200);
+    const path=`Pages/${pageFolders[page]}/${page}.html`,response=await request('/'+path);assert.equal(response.status,200);
     const html=await response.text();assert.equal(html,await readFile(new URL(path,root),'utf8'));assert.ok(html.includes(`href="${page}.css"`));assert.ok(html.includes(`src="${page}.js"`));
     const scripts=[];for(const [,target]of html.matchAll(/(?:href|src)="([^"#]+)"/g)){
       if(/^(https?:|data:)/.test(target))continue;const localURL=new URL(target,new URL(path,root));await access(fileURLToPath(localURL));
@@ -33,7 +35,7 @@ test('each authenticated page has its own assets and all links load',async testC
 });
 test('legacy page URLs redirect to the new pages and preserve query parameters',async testContext=>{
   const {request}=await setup(testContext);for(const [old,target]of [['accounts','income'],['goals','goals'],['pie','spending-chart'],['spending','transactions'],['calendar','calendar'],['index','home']]){
-    const response=await request('/'+old+'.html?category=Food',{redirect:'manual'});assert.equal(response.status,302);assert.equal(response.headers.get('location'),`/pages/${target}/${target}.html?category=Food`);
+    const response=await request('/'+old+'.html?category=Food',{redirect:'manual'});assert.equal(response.status,302);assert.equal(response.headers.get('location'),`/Pages/${pageFolders[target]}/${target}.html?category=Food`);
   }
 });
 test('private files and server source cannot be downloaded',async testContext=>{const {request}=await setup(testContext);for(const path of ['/.env','/.git/config','/server/auth.mjs','/server/server.mjs','/users.json','/tests/auth.test.mjs'])assert.equal((await request(path)).status,404,path);});
@@ -62,7 +64,7 @@ test('signup, budget saves, conflict rejection, isolation and sign-out work over
   assert.equal((await save({budget:session.budget,revision:0,userId:session.user.id})).status,409);
   assert.equal((await(await fetch(base+'/api/budget',{headers:{Cookie:otherCookie}})).json()).budget.events.length,0);
   await fetch(base+'/api/signout',{method:'POST',headers:{Cookie:cookie}});assert.equal((await fetch(base+'/api/session',{headers:{Cookie:cookie}})).status,401);
-  assert.equal((await fetch(base+'/pages/home/home.html',{redirect:'manual'})).headers.get('location'),'/pages/auth/auth.html');
+  assert.equal((await fetch(base+'/Pages/Home Page/home.html',{redirect:'manual'})).headers.get('location'),'/Pages/Sign In Page/auth.html');
 });
 
 
@@ -76,4 +78,22 @@ test('settings API persists partial updates and rejects anonymous, cross-site, w
   assert.equal((await patch({userId:session.user.id,patch:{theme:'dark',chat:{homeOnly:true}}})).status,200);
   assert.equal((await patch({userId:session.user.id,patch:{palette:'ocean',chat:{shareBudget:false}}})).status,200);
   const restored=await(await request('/api/session')).json();assert.equal(restored.preferences.theme,'dark');assert.equal(restored.preferences.palette,'ocean');assert.equal(restored.preferences.chat.homeOnly,true);assert.equal(restored.preferences.chat.shareBudget,false);assert.equal(restored.revision,session.revision);assert.deepEqual(restored.budget.events,session.budget.events);
+});
+
+// Former nested URLs remain valid after the folder rename, including sign-in.
+test('previous nested page links redirect to their named folders',async testContext=>{
+  const {request}=await setup(testContext);
+  for(const [slug,folder] of Object.entries(pageFolders)){
+    const response=await request('/pages/'+slug+'/'+slug+'.html?source=bookmark',{redirect:'manual'});
+    assert.equal(response.status,302);assert.equal(response.headers.get('location'),'/Pages/'+folder+'/'+slug+'.html?source=bookmark');
+  }
+});
+
+test('every reorganized app page still requires sign-in',async testContext=>{
+  const {base}=await setup(testContext);
+  for(const [slug,folder] of Object.entries(pageFolders)){
+    const response=await fetch(base+'/Pages/'+folder+'/'+slug+'.html',{redirect:'manual'});
+    assert.equal(response.status,slug==='auth'?200:302);
+    if(slug!=='auth')assert.equal(response.headers.get('location'),'/Pages/Sign In Page/auth.html');
+  }
 });

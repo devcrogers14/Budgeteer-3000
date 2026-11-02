@@ -17,7 +17,7 @@ function renderHome() {
   }));
   const count = currentMonthPurchases().filter((event)=>event.category === selectedCategory).length;
   getElement('overview-chart-detail').textContent = `${selectedCategory} · ${formatMoney(totals[selectedCategory])} · ${formatPercentage(totals[selectedCategory],spent)} · ${count} ${count === 1 ? 'purchase' : 'purchases'}`;
-  getElement('overview-chart-link').href = `../spending-chart/spending-chart.html?category=${encodeURIComponent(selectedCategory)}`;
+  getElement('overview-chart-link').href = `../Pie Chart Page/spending-chart.html?category=${encodeURIComponent(selectedCategory)}`;
   showPurchases('recent-spending', [...budgetData.events].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3));
 }
 

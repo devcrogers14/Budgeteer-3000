@@ -2,6 +2,14 @@
 
 Labels describe saved snapshots; F/W prototype labels are not original release numbers. Older code/ZIP files are preserved, with notes beside each school archive.
 
+## File Reorganization — November 2, 2026
+
+- Rename the page root to Pages, with Sign In Page, Home Page, Goals Page, Income Page, Expenses Page, Pie Chart Page, Transactions Page and Calendar Page folders.
+- Keep each page's HTML, CSS and JavaScript together; JavaScript retains the standard .js extension.
+- Update navigation, entry/sign-in/sign-out redirects, the server file allowlist and Home-only chat detection for folder names containing spaces.
+- Preserve old bookmarks through redirects. Keep the six public root files unchanged and the private .env excluded from Git.
+- Pass all 49 automated checks and a browser smoke check covering sign-in, every navigation tab, Home-only chat and sign-out.
+
 ## File Reorganization — November 1, 2026
 
 - Save user settings with each profile rather than browser-wide: theme, palette, chat position, Home-only visibility, sharing choice and last 14 messages.

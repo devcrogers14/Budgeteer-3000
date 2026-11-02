@@ -38,7 +38,7 @@ Cream, Sage, Ocean and Rose palettes, Dark Mode, simple page-entry motion and th
 
 Signed-in users can chat with Gemini after adding a private API key to `.env`. Obvious unrelated questions are refused locally without Gemini quota. Uncertain requests reach Gemini and then pass through the structured-response scope filter. Included budget context is built from the authenticated profile's saved data, rather than trusting a submitted snapshot. The model cannot edit records or move money. Live Gemini answers were not used for verification.
 
-See [TESTING.md](TESTING.md) for the 47 automated checks and [PRESENTATION.md](PRESENTATION.md) for the demo walkthrough.
+See [TESTING.md](TESTING.md) for the 49 automated checks and [PRESENTATION.md](PRESENTATION.md) for the demo walkthrough.
 
 ## Persistence verified November 1, 2026
 

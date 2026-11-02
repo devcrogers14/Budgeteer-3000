@@ -45,7 +45,7 @@ function initialPreferences(userId){
   if(location.protocol==='file:'){document.documentElement.dataset.session='offline';document.body.replaceChildren();const note=document.createElement('main');note.textContent='Run Start Budgetron.bat and open http://127.0.0.1:3000 for sign-in and saved user budgets.';document.body.append(note);return;}
   try{
     const response=await fetch('/api/session',{cache:'no-store'});
-    if(response.status===401){location.replace('/pages/auth/auth.html');return;}
+    if(response.status===401){location.replace('/Pages/Sign In Page/auth.html');return;}
     if(!response.ok)throw new Error('Could not load your profile.');
     const result=await response.json();signedInUser=result.user;budgetData=result.budget;budgetRevision=result.revision;initializeGoals();
     window.BudgetronSession.ready=true;
@@ -60,7 +60,7 @@ function initialPreferences(userId){
         await Promise.allSettled([budgetSaveQueue,preferenceSaveQueue]);
         if(lastSaveError&&!confirm('Some changes could not be saved. Sign out anyway?'))return;
         const response=await fetch('/api/signout',{method:'POST'});if(!response.ok)throw new Error('Could not sign out. Please try again.');
-        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');location.replace('/pages/auth/auth.html');
+        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');location.replace('/Pages/Sign In Page/auth.html');
       }catch(error){getElement('status').textContent=error.message;}
     });
   }catch(error){document.documentElement.dataset.session='ready';showSaveError(error);}

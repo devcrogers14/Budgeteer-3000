@@ -18,7 +18,7 @@
   const messageList=chatPanel.querySelector('#chat-messages'),messageInput=chatPanel.querySelector('#chat-input'),sendButton=chatPanel.querySelector('#chat-send'),newChatButton=chatPanel.querySelector('#chat-new'),connectionStatus=chatPanel.querySelector('#chat-connection'),shareBudgetCheckbox=chatPanel.querySelector('#chat-share-budget');
   // Store display preferences separately from the budget, so resetting demo money keeps them.
   const displaySettingsKey = 'budgetron-chat-display-v1';
-  const isHomePage = /\/pages\/home\/home\.html$/.test(location.pathname) || /\/(?:index\.html)?$/.test(location.pathname);
+  const isHomePage = /\/Pages\/Home Page\/home\.html$/.test(decodeURIComponent(location.pathname)) || /\/(?:index\.html)?$/.test(location.pathname);
   let displaySettings = {homeOnly:false, position:null};
   try {
     const savedSettings = JSON.parse(localStorage.getItem(displaySettingsKey));

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- Goals: authenticated profile data, shared theme and reusable budget controls. -->
+<!-- Transactions: authenticated profile data, shared theme and reusable budget controls. -->
 <html lang="en" data-session="loading">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-      Budgetron 3000 · Goals
+      Budgetron 3000 · Transactions
     </title>
     <link rel="stylesheet" href="../../css%20files/styles.css">
     <link rel="stylesheet" href="../../css%20files/chat.css">
-    <link rel="stylesheet" href="goals.css">
+    <link rel="stylesheet" href="transactions.css">
     <script src="../../javascript%20files/theme.js">
     </script>
     <script src="../../javascript%20files/budget-core.js" defer>
@@ -24,7 +24,7 @@
     </script>
     <script src="../../javascript%20files/ui.js" defer>
     </script>
-    <script src="goals.js" defer>
+    <script src="transactions.js" defer>
     </script>
     <script src="../../javascript%20files/chat.js" defer>
     </script>
@@ -33,7 +33,7 @@
   </head>
   <body>
     <header>
-      <a class="brand" href="../home/home.html" aria-label="Budgetron 3000 trademark home">
+      <a class="brand" href="../Home Page/home.html" aria-label="Budgetron 3000 trademark home">
         <span class="wordmark">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="6" width="18" height="15" rx="5"/>
@@ -54,7 +54,7 @@
         </span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="../home/home.html">
+        <a href="../Home Page/home.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-6v-7H9v7H3z"/></svg>
           </span>
@@ -62,7 +62,7 @@
             Home
           </span>
         </a>
-        <a href="../goals/goals.html" aria-current="page">
+        <a href="../Goals Page/goals.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="m8 14-2 8 6-3 6 3-2-8M12 5l1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 7.3l2-.3z"/></svg>
           </span>
@@ -70,7 +70,7 @@
             Goals
           </span>
         </a>
-        <a href="../income/income.html">
+        <a href="../Income Page/income.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg>
           </span>
@@ -78,7 +78,7 @@
             Income
           </span>
         </a>
-        <a href="../expenses/expenses.html">
+        <a href="../Expenses Page/expenses.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v5h14v-5"/></svg>
           </span>
@@ -86,7 +86,7 @@
             Expenses
           </span>
         </a>
-        <a href="../spending-chart/spending-chart.html">
+        <a href="../Pie Chart Page/spending-chart.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3a8 8 0 0 1 6 6h-6z"/></svg>
           </span>
@@ -94,7 +94,7 @@
             Pie Chart
           </span>
         </a>
-        <a href="../transactions/transactions.html">
+        <a href="../Transactions Page/transactions.html" aria-current="page">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="9" cy="6" rx="6" ry="3"/><path d="M3 6v5c0 4 12 4 12 0V6M3 11v5c0 4 12 4 12 0v-5M16 10c7 0 7 6 0 6m-1 4c7 2 9-1 9-4v-3"/></svg>
           </span>
@@ -102,7 +102,7 @@
             Transactions
           </span>
         </a>
-        <a href="../calendar/calendar.html">
+        <a href="../Calendar Page/calendar.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m3 0h2m3 0h1"/></svg>
           </span>
@@ -118,10 +118,10 @@
       <div class="page-title">
         <div>
           <h1>
-            Goals
+            Transactions
           </h1>
           <p>
-            Track income remaining after expenses toward your goals.
+            A complete overview of money coming in and going out.
           </p>
         </div>
         <div class="page-actions">
@@ -154,74 +154,64 @@
       <p class="notice">
         Your profile uses saved local data. No real banks or money transfers.
       </p>
-      <section id="goals" class="goals-layout" aria-label="Savings goals">
+      <div class="summary">
         <div>
-          <ul id="goal-list" class="goal-list" aria-label="Choose a goal">
-          </ul>
-          <article class="panel">
-            <div class="section-title">
-              <h2>
-                My Savings Goal
-              </h2>
-              <div class="goal-actions">
-                <button class="text-button" data-open="goal-dialog" data-goal-action="edit">
-                  Edit goal
-                </button>
-                <button id="delete-goal" class="text-button danger-link" type="button">
-                  Delete goal
-                </button>
-              </div>
-            </div>
-            <h3 id="goal-name">
-            </h3>
-            <p id="goal-deadline" class="small">
-            </p>
-            <p id="goal-progress">
-            </p>
-            <progress id="goal-bar" max="100" value="0" aria-label="Savings goal progress">
-            </progress>
-            <p id="goal-remaining" class="small">
-            </p>
-            <p id="goal-source" class="small">
-            </p>
-            <p class="small">
-              <a href="../income/income.html">
-                Manage income →
-              </a>
-            </p>
-          </article>
-          <button class="goal-add" data-open="goal-dialog" data-goal-mode="add">
-            + Add goal
-          </button>
+          <span>
+            Total income
+          </span>
+          <strong id="transactions-income">
+          </strong>
         </div>
         <div>
-          <article class="panel goal-chart-panel">
-            <h2>
-              Your Progress
-            </h2>
-            <div id="goal-ring" class="goal-ring" role="img">
-              <strong id="goal-percentage">
-              </strong>
-              <span>
-                of your goal saved
-              </span>
-            </div>
-            <p class="small">
-              A little closer, every time you save.
-            </p>
-          </article>
-          <article class="panel tip-panel">
-            <h2>
-              Your next step
-            </h2>
-            <p id="goal-tip">
-            </p>
-            <p class="small">
-              A simple estimate based on your target and savings.
-            </p>
-          </article>
+          <span>
+            Total expenses
+          </span>
+          <strong id="transactions-expenses">
+          </strong>
         </div>
-      </section>
+        <div>
+          <span>
+            Remaining
+          </span>
+          <strong id="transactions-net">
+          </strong>
+        </div>
+      </div>
+      <article class="panel">
+        <div class="section-title">
+          <h2>
+            All Transactions
+          </h2>
+          <a class="button-link" href="../Income Page/income.html">
+            Add income
+          </a>
+          <a class="button-link" href="../Expenses Page/expenses.html">
+            Add expense
+          </a>
+        </div>
+        <label>
+          Show
+          <select id="transaction-filter">
+            <option value="all">
+              All entries
+            </option>
+            <option value="income">
+              Income
+            </option>
+            <option value="purchase">
+              Expenses
+            </option>
+            <option value="planned">
+              Planned expenses
+            </option>
+          </select>
+        </label>
+        <p class="small">
+          Complete history across all dates. Planned expenses are listed but excluded from totals.
+        </p>
+        <ul id="all-spending" class="payment-list">
+        </ul>
+      </article>
       <footer>
         <button id="reset-demo" type="button" class="text-button">
           Reset profile
@@ -230,53 +220,5 @@
       <p id="status" role="status" class="status">
       </p>
     </main>
-    <dialog id="goal-dialog">
-      <form id="goal-form">
-        <h2>
-          Set your savings goal
-        </h2>
-        <label>
-          Goal name
-          <input id="goal-input-name" maxlength="60" required>
-        </label>
-        <label>
-          Target ($)
-          <input id="goal-target" type="number" min="0.01" max="1000000000" step="0.01" required>
-        </label>
-        <label>
-          Complete by (optional)
-          <input id="goal-date" type="date">
-        </label>
-        <p class="small">
-          Progress follows total recorded income minus expenses, with a minimum of zero. Planned payments do not count. Goals do not reserve money.
-        </p>
-        <div class="button-row">
-          <button class="secondary" type="button" data-close>
-            Cancel
-          </button>
-          <button type="submit">
-            Save goal
-          </button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="delete-goal-dialog" aria-labelledby="delete-goal-title">
-      <h2 id="delete-goal-title">
-        Delete goal?
-      </h2>
-      <p id="delete-goal-description">
-      </p>
-      <p class="small">
-        Only the goal is removed; income and expenses stay unchanged.
-      </p>
-      <div class="button-row">
-        <button type="button" class="secondary" data-close>
-          Cancel
-        </button>
-        <button type="button" class="danger-button" id="confirm-delete-goal">
-          Delete goal
-        </button>
-      </div>
-    </dialog>
   </body>
 </html>

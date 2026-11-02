@@ -26,15 +26,15 @@ Each page owns its HTML, JavaScript and CSS together. Only the entry page stays 
 
 ```text
 index.html
-pages/
-  auth/           auth.html, auth.js, auth.css
-  home/           home.html, home.js, home.css
-  goals/          goals.html, goals.js, goals.css
-  income/         income.html, income.js, income.css
-  expenses/       expenses.html, expenses.js, expenses.css
-  spending-chart/ spending-chart.html, spending-chart.js, spending-chart.css
-  transactions/   transactions.html, transactions.js, transactions.css
-  calendar/       calendar.html, calendar.js, calendar.css
+Pages/
+  Sign In Page/  auth.html, auth.js, auth.css
+  Home Page/  home.html, home.js, home.css
+  Goals Page/  goals.html, goals.js, goals.css
+  Income Page/  income.html, income.js, income.css
+  Expenses Page/  expenses.html, expenses.js, expenses.css
+  Pie Chart Page/  spending-chart.html, spending-chart.js, spending-chart.css
+  Transactions Page/  transactions.html, transactions.js, transactions.css
+  Calendar Page/  calendar.html, calendar.js, calendar.css
 javascript files/ shared scripts used by multiple pages
 css files/        shared theme, layout and chat styles
 server/           local APIs, authentication, preferences and AI policy
@@ -48,7 +48,7 @@ See [VERSION.md](VERSION.md) for the current version and [CHANGELOG.md](docs/CHA
 
 | Folder/file | Purpose |
 | --- | --- |
-| `pages/` | Each app page has its own HTML/CSS/JS; `auth/` contains sign-in/signup. |
+| `Pages/` | Each app page has its own HTML/CSS/JS; `Sign In Page/` contains sign-in/signup. |
 | `javascript files/budget-core.js` | Pure calculations, sample data and validation shared with Node unit tests. |
 | `javascript files/state.js`, `session.js`, `ui.js` | In-memory browser state, authenticated server persistence and shared controls. |
 | `javascript files/transactions.js`, `goals.js`, `charts.js` | Reusable entry editing, net-income goal UI and interactive SVG charts. |
@@ -72,7 +72,7 @@ Ask Budgetron remains draggable with mouse/touch and Alt+arrow keys. **Position 
 
 ## Tests
 
-Run `node --test` for all **47 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs tests/preferences.test.mjs` for the **30 budgeting/auth/preferences unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
+Run `node --test` for all **49 checks**. Run `node --test tests/goal-state.test.mjs tests/auth.test.mjs tests/preferences.test.mjs` for the **30 budgeting/auth/preferences unit checks**. Tests use fake Gemini responses and never spend provider quota. See [TESTING.md](docs/TESTING.md).
 
 ## Saved settings
 

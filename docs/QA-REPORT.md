@@ -1,4 +1,10 @@
-# Whole-site verification — November 1, 2026
+# Verification
+
+## Page-folder reorganization — November 2, 2026
+
+All 49 automated tests passed after the move. A fresh browser smoke check verified sign-in, all seven navigation tabs, Home-only chat visibility and sign-out with no page errors or failed resources. Tests cover each page's linked assets, old bookmark redirects and sign-in protection. The browser check used an isolated in-memory demo account and no live Gemini calls.
+
+## Whole-site verification — November 1, 2026
 
 Result: **47 automated tests passed**, plus **11 whole-site browser scenarios** against a disposable disk-backed test database. Real user records and API keys were not used or modified.
 

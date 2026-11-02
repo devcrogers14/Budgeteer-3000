@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- Pie Chart: authenticated profile data, shared theme and reusable budget controls. -->
+<!-- Expenses: authenticated profile data, shared theme and reusable budget controls. -->
 <html lang="en" data-session="loading">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-      Budgetron 3000 · Pie Chart
+      Budgetron 3000 · Expenses
     </title>
     <link rel="stylesheet" href="../../css%20files/styles.css">
     <link rel="stylesheet" href="../../css%20files/chat.css">
-    <link rel="stylesheet" href="spending-chart.css">
+    <link rel="stylesheet" href="expenses.css">
     <script src="../../javascript%20files/theme.js">
     </script>
     <script src="../../javascript%20files/budget-core.js" defer>
@@ -24,7 +24,7 @@
     </script>
     <script src="../../javascript%20files/ui.js" defer>
     </script>
-    <script src="spending-chart.js" defer>
+    <script src="expenses.js" defer>
     </script>
     <script src="../../javascript%20files/chat.js" defer>
     </script>
@@ -33,7 +33,7 @@
   </head>
   <body>
     <header>
-      <a class="brand" href="../home/home.html" aria-label="Budgetron 3000 trademark home">
+      <a class="brand" href="../Home Page/home.html" aria-label="Budgetron 3000 trademark home">
         <span class="wordmark">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="6" width="18" height="15" rx="5"/>
@@ -54,7 +54,7 @@
         </span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="../home/home.html">
+        <a href="../Home Page/home.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-6v-7H9v7H3z"/></svg>
           </span>
@@ -62,7 +62,7 @@
             Home
           </span>
         </a>
-        <a href="../goals/goals.html">
+        <a href="../Goals Page/goals.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="m8 14-2 8 6-3 6 3-2-8M12 5l1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 7.3l2-.3z"/></svg>
           </span>
@@ -70,7 +70,7 @@
             Goals
           </span>
         </a>
-        <a href="../income/income.html">
+        <a href="../Income Page/income.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg>
           </span>
@@ -78,7 +78,7 @@
             Income
           </span>
         </a>
-        <a href="../expenses/expenses.html">
+        <a href="../Expenses Page/expenses.html" aria-current="page">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v5h14v-5"/></svg>
           </span>
@@ -86,7 +86,7 @@
             Expenses
           </span>
         </a>
-        <a href="../spending-chart/spending-chart.html" aria-current="page">
+        <a href="../Pie Chart Page/spending-chart.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3a8 8 0 0 1 6 6h-6z"/></svg>
           </span>
@@ -94,7 +94,7 @@
             Pie Chart
           </span>
         </a>
-        <a href="../transactions/transactions.html">
+        <a href="../Transactions Page/transactions.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="9" cy="6" rx="6" ry="3"/><path d="M3 6v5c0 4 12 4 12 0V6M3 11v5c0 4 12 4 12 0v-5M16 10c7 0 7 6 0 6m-1 4c7 2 9-1 9-4v-3"/></svg>
           </span>
@@ -102,7 +102,7 @@
             Transactions
           </span>
         </a>
-        <a href="../calendar/calendar.html">
+        <a href="../Calendar Page/calendar.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m3 0h2m3 0h1"/></svg>
           </span>
@@ -118,10 +118,10 @@
       <div class="page-title">
         <div>
           <h1>
-            Pie Chart
+            Expenses
           </h1>
           <p>
-            Separate breakdowns of this month’s income and expenses.
+            Record purchases and plan future payments.
           </p>
         </div>
         <div class="page-actions">
@@ -154,34 +154,99 @@
       <p class="notice">
         Your profile uses saved local data. No real banks or money transfers.
       </p>
-      <section class="two-column" aria-label="Income and expense charts">
+      <div class="summary">
+        <div>
+          <span>
+            Expense this month
+          </span>
+          <strong id="ledger-total">
+          </strong>
+        </div>
+        <div>
+          <span>
+            Recorded entries this month
+          </span>
+          <strong id="ledger-count">
+          </strong>
+        </div>
+        <div>
+          <span>
+            Income remaining after expenses
+          </span>
+          <strong id="ledger-net">
+          </strong>
+        </div>
+      </div>
+      <div class="two-column">
         <article class="panel">
           <h2>
-            Income Breakdown
+            Add Expense
           </h2>
-          <svg class="overview-donut" id="income-donut" viewBox="0 0 440 400" role="group">
-          </svg>
-          <p id="income-chart-total">
-          </p>
-          <div id="income-chart-categories" class="chart-categories">
-          </div>
-          <ul id="income-category-items" class="payment-list">
-          </ul>
+          <form id="ledger-form">
+            <label>
+              Description
+              <input id="ledger-name" maxlength="60" required>
+            </label>
+            <label>
+              Amount ($)
+              <input id="ledger-amount" type="number" min="0.01" max="1000000000" step="0.01" required>
+            </label>
+            <label>
+              Date
+              <input id="ledger-date" type="date" required>
+            </label>
+            <label>
+              Type
+              <select id="ledger-kind">
+                <option value="purchase">
+                  Expense
+                </option>
+                <option value="planned">
+                  Planned expense
+                </option>
+              </select>
+            </label>
+            <label>
+              Category
+              <select id="ledger-category" required>
+              </select>
+            </label>
+            <button type="submit">
+              Add expense
+            </button>
+          </form>
         </article>
         <article class="panel">
           <h2>
-            Expense Breakdown
+            Create a Category
           </h2>
-          <svg class="overview-donut" id="expense-donut" viewBox="0 0 440 400" role="group">
-          </svg>
-          <p id="expense-chart-total">
+          <p class="small">
+            Categories belong to your profile and this expense list.
           </p>
-          <div id="expense-chart-categories" class="chart-categories">
-          </div>
-          <ul id="expense-category-items" class="payment-list">
-          </ul>
+          <form id="category-form">
+            <label>
+              Category name
+              <input id="category-name" maxlength="40" required>
+            </label>
+            <label>
+              Chart color
+              <input id="category-color" type="color" value="#507a63">
+            </label>
+            <button type="submit">
+              Create category
+            </button>
+          </form>
+          <p id="category-status" role="status">
+          </p>
         </article>
-      </section>
+      </div>
+      <article class="panel">
+        <h2>
+          Expense History
+        </h2>
+        <ul id="ledger-list" class="payment-list">
+        </ul>
+      </article>
       <footer>
         <button id="reset-demo" type="button" class="text-button">
           Reset profile
