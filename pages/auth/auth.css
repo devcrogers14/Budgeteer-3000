@@ -1,0 +1,2 @@
+/* A focused, mobile-friendly entry screen for local profile authentication. */
+.auth-page {display:block;} .auth-page main {max-width:520px;padding:40px 20px;} .auth-page .brand {display:block;margin-bottom:24px;} .auth-page h1 {font-size:30px;}

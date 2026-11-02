@@ -14,7 +14,7 @@ function renderGoalsPage(){
   const deleteGoalButton=getElement('delete-goal');deleteGoalButton.hidden=!goal;deleteGoalButton.disabled=!goal;
   if(!goal){
     getElement('goal-deadline').textContent='';
-    getElement('goal-source').textContent='Your savings balances are unchanged.';
+    getElement('goal-source').textContent='Add income and expenses to build your available savings.';
     getElement('goal-ring').style.background='var(--subtle)';
     getElement('goal-ring').setAttribute('aria-label','No savings goal selected');
     getElement('goal-percentage').textContent='—';
@@ -24,8 +24,7 @@ function renderGoalsPage(){
   deleteGoalButton.setAttribute('aria-label',`Delete goal: ${goal.name}`);
   const savings=goalSavings(goal);
   getElement('goal-deadline').textContent=goal.dueDate?`Complete by ${goal.dueDate}`:'Set a date when you are ready.';
-  const account=budgetData.accounts.find(account=>account.id===goal.accountId);
-  getElement('goal-source').textContent=account?`Tracking ${account.bank} savings.`:'Tracking all demo savings accounts.';
+  getElement('goal-source').textContent='Tracking total income remaining after recorded expenses. Planned expenses are excluded.';
   const goalPercentage=Math.min(savings/goal.target*100,100);
   getElement('goal-ring').style.background=`conic-gradient(var(--chart-2) ${goalPercentage}%,var(--subtle) 0)`;
   getElement('goal-ring').setAttribute('aria-label',`${Math.round(goalPercentage)} percent of ${goal.name} saved`);
@@ -47,7 +46,7 @@ getElement('confirm-delete-goal').addEventListener('click',()=>{
   const removed=removeGoal(goalPendingDeletion);goalPendingDeletion=null;
   getElement('delete-goal-dialog').close();
   if(!removed)return;
-  save('Savings goal deleted. Your account balances are unchanged.');
+  save('Savings goal deleted. Your income and expenses are unchanged.');
   (document.querySelector('#goal-list [aria-pressed="true"]')||document.querySelector('.goal-add'))?.focus();
 });
 window.BudgetronPage={render:renderGoalsPage};

@@ -3,6 +3,7 @@
 function renderHome() {
   const totals = spendingTotals();
   const spent = Object.values(totals).reduce((sum, amount) => sum + amount, 0);
+  getElement('income-total').textContent=formatMoney(BudgetMath.totalIncome(budgetData,currentMonth));
   getElement('spent').textContent = formatMoney(spent);
   getElement('remaining').textContent = formatMoney(budgetData.income - spent);
   drawSpendingChart(getElement('pie'), totals, renderHome);
@@ -17,7 +18,7 @@ function renderHome() {
   const count = currentMonthPurchases().filter((event)=>event.category === selectedCategory).length;
   getElement('overview-chart-detail').textContent = `${selectedCategory} · ${formatMoney(totals[selectedCategory])} · ${formatPercentage(totals[selectedCategory],spent)} · ${count} ${count === 1 ? 'purchase' : 'purchases'}`;
   getElement('overview-chart-link').href = `../spending-chart/spending-chart.html?category=${encodeURIComponent(selectedCategory)}`;
-  showPurchases('recent-spending', [...currentMonthPurchases()].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3));
+  showPurchases('recent-spending', [...budgetData.events].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3));
 }
 
 window.BudgetronPage = {render() {renderHome(); renderGoalSummary();}};

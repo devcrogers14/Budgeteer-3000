@@ -1,43 +1,20 @@
-// Budget-state regression checks using an isolated browser-like storage context. Confirm that deleting goals preserves money records and survives reloading.
+// Unit tests for pure budget arithmetic, category validation and goal progress. No browser or AI calls.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
-import {createContext,runInContext} from 'node:vm';
-const source=await readFile(new URL('../javascript%20files/state.js',import.meta.url),'utf8');
-// Load the budget script in an isolated VM so tests can inspect state without a real browser.
-function state(saved){
-  const storage=new Map(saved?[['insert-name-budget-v1',JSON.stringify(saved)]]:[]);
-  const context=createContext({URLSearchParams,location:{search:''},localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)}});
-  runInContext(source,context);
-  return {read:()=>JSON.parse(runInContext('JSON.stringify(budgetData)',context)),run:code=>runInContext(code,context)};
-}
-test('deleting the selected goal selects another and preserves all money records',()=>{
-  const model=state();
-  model.run("budgetData.goals.push({id:'second',name:'Holiday',target:200000});");
-  const before=model.read();
-  assert.equal(model.run('removeGoal(budgetData.activeGoalId)'),true);
-  const after=model.read();
-  assert.equal(after.activeGoalId,'second');assert.equal(after.goal.name,'Holiday');
-  assert.deepEqual(after.accounts,before.accounts);assert.deepEqual(after.events,before.events);assert.equal(after.income,before.income);
-});
-test('deleting a different goal preserves the selected goal',()=>{
-  const model=state();const before=model.read();
-  model.run("budgetData.goals.push({id:'second',name:'Holiday',target:200000});removeGoal('second');");
-  assert.equal(model.read().activeGoalId,before.activeGoalId);
-});
-test('deleting the final goal survives saving and reloading without recreating it',()=>{
-  const model=state();const before=model.read();
-  model.run('removeGoal(budgetData.activeGoalId)');
-  const empty=model.read();
-  assert.deepEqual(empty.goals,[]);assert.equal(empty.goal,null);assert.equal(empty.activeGoalId,null);
-  const reloaded=state(empty).read();
-  assert.deepEqual(reloaded.goals,[]);assert.equal(reloaded.goal,null);assert.equal(reloaded.activeGoalId,null);
-  assert.deepEqual(reloaded.accounts,before.accounts);assert.deepEqual(reloaded.events,before.events);
-});
-test('deleting a missing goal makes no changes',()=>{
-  const model=state();const before=model.read();assert.equal(model.run("removeGoal('missing')"),false);assert.deepEqual(model.read(),before);
-});
-test('older saved budgets with a single legacy goal migrate without data loss',()=>{
-  const seed=state().read();delete seed.goals;delete seed.activeGoalId;
-  const migrated=state(seed).read();assert.equal(migrated.goals.length,1);assert.equal(migrated.goal.name,seed.goal.name);assert.deepEqual(migrated.accounts,seed.accounts);
-});
+import BudgetMath from '../javascript files/budget-core.js';
+const demo=()=>BudgetMath.createBudget(true,new Date(2026,9,30));
+test('new users start with an empty ledger and no goals',()=>{const budget=BudgetMath.createBudget();assert.equal(budget.events.length,0);assert.equal(budget.goals.length,0);assert.equal(BudgetMath.totalIncome(budget),0);});
+test('demo income, expense and remaining totals are exact cents',()=>{const budget=demo();assert.equal(BudgetMath.totalIncome(budget),300000);assert.equal(BudgetMath.totalExpenses(budget),149000);assert.equal(BudgetMath.goalProgress(budget,budget.goals[0]).amount,151000);});
+test('planned expenses never change expense totals or goal progress',()=>{const budget=demo(),before=BudgetMath.goalProgress(budget,budget.goals[0]);budget.events.push({id:'future',name:'Future bill',amount:999999,date:'2027-01-01',kind:'planned',category:'Other'});assert.deepEqual(BudgetMath.goalProgress(budget,budget.goals[0]),before);});
+test('goal progress is clamped at zero when expenses exceed income',()=>{const budget=demo();budget.events.find(event=>event.kind==='income').amount=1;assert.deepEqual(BudgetMath.goalProgress(budget,budget.goals[0]),{amount:0,percent:0});});
+test('goal progress caps at 100 percent without hiding available income',()=>{const budget=demo();assert.deepEqual(BudgetMath.goalProgress(budget,{target:100}),{amount:151000,percent:100});});
+test('each goal shares available net income without reserving funds',()=>{const budget=demo();assert.equal(BudgetMath.goalProgress(budget,budget.goals[0]).amount,BudgetMath.goalProgress(budget,budget.goals[1]).amount);});
+test('monthly totals exclude other months but complete totals include them',()=>{const budget=demo();budget.events.push({id:'old',name:'Old pay',amount:12345,date:'2025-01-01',kind:'income',category:'Salary'});assert.equal(BudgetMath.totalIncome(budget,'2026-10'),300000);assert.equal(BudgetMath.totalIncome(budget),312345);});
+test('income and expense categories produce separate chart totals',()=>{const budget=demo();assert.equal(BudgetMath.categoryTotals(budget,'income').Salary,250000);assert.equal(BudgetMath.categoryTotals(budget,'expense').Home,120000);assert.equal(BudgetMath.categoryTotals(budget,'income').Home,undefined);});
+test('adding and deleting a transaction changes remaining goal progress',()=>{const budget=demo();budget.events.push({id:'extra',name:'Extra pay',amount:10000,date:'2026-10-30',kind:'income',category:'Salary'});assert.equal(BudgetMath.goalProgress(budget,budget.goals[0]).amount,161000);budget.events=budget.events.filter(event=>event.id!=='extra');assert.equal(BudgetMath.goalProgress(budget,budget.goals[0]).amount,151000);});
+test('deleting a goal does not alter income or expense records',()=>{const budget=demo(),before=structuredClone(budget.events);budget.goals=[];budget.activeGoalId=null;assert.deepEqual(budget.events,before);assert.equal(BudgetMath.validateBudget(budget),true);});
+test('custom categories are trimmed, typed and reject case-insensitive duplicates',()=>{const budget=demo();BudgetMath.addCategory(budget,'  Gifts  ','income','#123456');assert.equal(budget.categories.at(-1).name,'Gifts');assert.throws(()=>BudgetMath.addCategory(budget,'gifts','income'));BudgetMath.addCategory(budget,'Gifts','expense','#123456');});
+test('invalid category names and colors are rejected',()=>{const budget=demo();for(const name of ['', 'x'.repeat(41)])assert.throws(()=>BudgetMath.addCategory(budget,name,'income'));assert.throws(()=>BudgetMath.addCategory(budget,'Bonus','income','red'));});
+test('transaction validation rejects negative, fractional and unsafe amounts',()=>{for(const amount of [-1,0,1.5,Number.MAX_SAFE_INTEGER]){const budget=demo();budget.events[0].amount=amount;assert.throws(()=>BudgetMath.validateBudget(budget));}});
+test('transaction validation rejects impossible dates and wrong category types',()=>{const budget=demo();budget.events[0].date='2026-02-30';assert.throws(()=>BudgetMath.validateBudget(budget));budget.events[0].date='2026-10-01';budget.events[0].category='Food';assert.throws(()=>BudgetMath.validateBudget(budget));});
+test('duplicate record IDs are rejected and valid demo data passes validation',()=>{const budget=demo();assert.equal(BudgetMath.validateBudget(budget),true);budget.events.push({...budget.events[0]});assert.throws(()=>BudgetMath.validateBudget(budget));});

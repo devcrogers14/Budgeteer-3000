@@ -1,10 +1,10 @@
 // Shared interface actions: save the budget, refresh the current page, open/close dialogs and reset demo data. Each page registers its render function as window.BudgetronPage.
 // Persist the budget, rerender the active page and announce the result in the status message.
 function save(message) {
-  try { localStorage.setItem(storageKey, JSON.stringify(budgetData)); }
-  catch { message += ' Browser storage is unavailable; changes last until you close this page.'; }
-  render();
-  getElement('status').textContent = message;
+  initializeGoals();render();
+  if(!window.BudgetronSession?.ready)return;
+  getElement('status').textContent='Saving…';
+  window.BudgetronSession.persist(structuredClone(budgetData)).then(()=>{getElement('status').textContent=message;}).catch(()=>{});
 }
 
 // Read a dollar input and round it to integer cents before storing it.
@@ -28,10 +28,8 @@ document.querySelectorAll('[data-open]').forEach((button) => button.addEventList
 document.querySelectorAll('[data-close]').forEach((button) => button.addEventListener('click', () => button.closest('dialog').close()));
 
 getElement('reset-demo')?.addEventListener('click', () => {
-  if (!confirm('Reset your demo changes to the sample account?')) return;
-  budgetData = sampleData();
+  if (!confirm('Reset this profile? The presentation profile restores dummy data; other profiles become empty.')) return;
+  budgetData = signedInUser?.isDemo ? sampleData() : BudgetMath.createBudget(false);
   initializeGoals(); window.BudgetronPage?.reset?.();
-  if (getElement('allocation-error')) getElement('allocation-error').textContent = '';
-  if (getElement('transfer-error')) getElement('transfer-error').textContent = '';
   save('Demo reset.');
 });

@@ -16,6 +16,7 @@ function monthEvents() {
 // Rebuild day buttons and the event list, preserving the selected day filter.
 
 function renderCalendar() {
+  fillCategories(getElement('payment-category'),getElement('payment-kind').value,getElement('payment-category').value);
   getElement('month-title').textContent = visibleMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   const events = monthEvents();
   const days = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0).getDate();
@@ -40,7 +41,7 @@ function renderCalendar() {
     const item = document.createElement('li'); const title = document.createElement('div'); title.className = 'payment-title';
     const name = document.createElement('span'); name.textContent = event.name;
     const amount = document.createElement('span'); amount.textContent = formatMoney(event.amount); title.append(name, amount);
-    const detail = document.createElement('small'); detail.textContent = `${event.date} · ${event.kind === 'purchase' ? 'Purchase' : event.kind === 'transfer' ? 'Demo transfer' : 'Planned payment'}`;
+    const detail = document.createElement('small'); detail.textContent = `${event.date} · ${typeLabel(event.kind)}`;
     item.append(title, detail, transactionActions(event)); return item;
   }));
   if (!displayedEvents.length) { const item = document.createElement('li'); item.textContent = selectedDate ? 'No payments or purchases on this day.' : 'No payments or purchases this month.'; getElement('payment-list').append(item); }
@@ -70,3 +71,5 @@ render();
 if (getElement('payment-dialog') && ['purchase','transaction'].includes(new URLSearchParams(location.search).get('add'))) {
   getElement('payment-date').value = isoDate(today); getElement('payment-kind').value = 'purchase'; getElement('payment-dialog').showModal();
 }
+
+getElement('payment-kind').addEventListener('change',()=>fillCategories(getElement('payment-category'),getElement('payment-kind').value));

@@ -174,8 +174,8 @@
     const spent=currentMonthPurchases.reduce((sum,item)=>sum+item.amount,0);
     const categoryTotals=Object.fromEntries(Object.keys(categories).map(name=>[name,currentMonthPurchases.filter(item=>item.category===name).reduce((sum,item)=>sum+item.amount,0)/100]));
     return {date,currency:'USD',amountUnits:'dollars',monthlyIncome:budget.income/100,spentThisMonth:spent/100,incomeLeftAfterSpending:(budget.income-spent)/100,categoryTotals,
-      accounts:budget.accounts.slice(0,20).map(item=>({bank:item.bank,type:item.type,balance:item.balance/100,monthlyAllocation:item.allocation/100})),
-      goals:(Array.isArray(budget.goals)?budget.goals:budget.goal?[budget.goal]:[]).slice(0,12).map(goal=>({name:goal.name,target:goal.target/100,saved:goalSavings(goal)/100,dueDate:goal.dueDate||null,tracks:goal.accountId?'one savings account':'all savings accounts'})),
+      incomeTotal:BudgetMath.totalIncome(budget)/100,expenseTotal:BudgetMath.totalExpenses(budget)/100,netIncome:Math.max(0,BudgetMath.totalIncome(budget)-BudgetMath.totalExpenses(budget))/100,
+      goals:(Array.isArray(budget.goals)?budget.goals:budget.goal?[budget.goal]:[]).slice(0,12).map(goal=>({name:goal.name,target:goal.target/100,saved:goalSavings(goal)/100,dueDate:goal.dueDate||null,tracks:'income remaining after expenses'})),
       recentPurchases:[...currentMonthPurchases].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12).map(item=>({name:item.name,date:item.date,category:item.category,amount:item.amount/100})),
       upcomingPayments:budget.events.filter(item=>item.kind==='planned'&&item.date>=date).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,12).map(item=>({name:item.name,date:item.date,amount:item.amount/100})),
       transferRule:budget.transfer?{amount:budget.transfer.amount/100,nextDate:budget.transfer.date,repeatMonthly:budget.transfer.repeat}:null};

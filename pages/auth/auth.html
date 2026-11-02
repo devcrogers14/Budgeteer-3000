@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- Sign-in and registration entry point; all credentials go to the local server. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      Budgetron 3000 · Sign in
+    </title>
+    <link rel="stylesheet" href="../../css%20files/styles.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="auth.js" defer>
+    </script>
+  </head>
+  <body class="auth-page">
+    <main>
+      <a class="brand" href="/">
+        Budgetron 3000™
+      </a>
+      <article class="panel">
+        <h1 id="auth-title">
+          Welcome back
+        </h1>
+        <p>
+          Sign in to your own income, expenses and goals.
+        </p>
+        <form id="auth-form">
+          <label id="name-field" hidden>
+            Name
+            <input id="auth-name" maxlength="60" autocomplete="name">
+          </label>
+          <label>
+            Email
+            <input id="auth-email" type="email" maxlength="254" autocomplete="username" required>
+          </label>
+          <label>
+            Password
+            <input id="auth-password" type="password" minlength="8" maxlength="128" autocomplete="current-password" required>
+          </label>
+          <button id="auth-submit" type="submit">
+            Sign in
+          </button>
+        </form>
+        <p id="auth-status" role="status">
+        </p>
+        <button id="auth-switch" class="text-button" type="button">
+          New here? Create an account
+        </button>
+      </article>
+      <article class="panel">
+        <h2>
+          Presentation account
+        </h2>
+        <p>
+          Jordan Demo · $3,000 income · $1,490 expenses · two savings goals and calendar bills.
+        </p>
+        <p class="small">
+          demo@budgetron.local
+          <br>
+          BudgetronDemo3000!
+        </p>
+        <button id="fill-demo" class="secondary" type="button">
+          Use demo credentials
+        </button>
+      </article>
+      <p class="small">
+        Local classroom prototype. Run Start Budgetron.bat; accounts are saved on this computer.
+      </p>
+    </main>
+  </body>
+</html>

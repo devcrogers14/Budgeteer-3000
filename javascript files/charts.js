@@ -1,10 +1,12 @@
 // Draw the spending donut with SVG paths, labels, accessible selection and floating-slice feedback. Angles use radians; chart coordinates are SVG viewBox units.
 // Rebuild the donut from category totals and call onSelect when a slice is chosen.
-function drawSpendingChart(chartSvg, totals, onSelect) {
+function drawSpendingChart(chartSvg, totals, onSelect, options={}) {
+  const chartColors=options.colors||categories;
+  const selectedName=options.selectedCategory||selectedCategory;
   const svgNamespace = 'http://www.w3.org/2000/svg';
   const total = Object.values(totals).reduce((sum, amount) => sum + amount, 0);
   chartSvg.replaceChildren();
-  chartSvg.setAttribute('aria-label', `Spending by category. ${Object.entries(totals).map(([name, amount]) => `${name}: ${formatMoney(amount)}, ${formatPercentage(amount, total)}`).join('. ')}`);
+  chartSvg.setAttribute('aria-label', `${options.label||'Spending by category'}. ${Object.entries(totals).map(([name, amount]) => `${name}: ${formatMoney(amount)}, ${formatPercentage(amount, total)}`).join('. ')}`);
   const element = (tag, attributes) => {
     const node = document.createElementNS(svgNamespace, tag);
     Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
@@ -20,7 +22,7 @@ function drawSpendingChart(chartSvg, totals, onSelect) {
     const sweep = amount / total * Math.PI * 2;
     const gap = Math.min(0.025, sweep / 10);
     const start = angle + gap / 2, end = angle + sweep - gap / 2, middle = angle + sweep / 2;
-    const selected = name === selectedCategory;
+    const selected = name === selectedName;
     const liftX = Math.cos(middle) * 12;
     const liftY = Math.sin(middle) * 12 - 16;
     const outerRadius = 129, innerRadius = 86;
@@ -28,8 +30,8 @@ function drawSpendingChart(chartSvg, totals, onSelect) {
     const largeArcFlag = end - start > Math.PI ? 1 : 0;
     const path = element('path', {
       d:`M ${outerStartPoint} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${outerEndPoint} L ${innerEndPoint} A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStartPoint} Z`,
-      fill:categories[name], class:'chart-slice', role:'button', tabindex:0,
-      'data-category':name, 'aria-pressed':String(name === selectedCategory),
+      fill:chartColors[name], class:'chart-slice', role:'button', tabindex:0,
+      'data-category':name, 'aria-pressed':String(name === selectedName),
       'aria-label':`${name}: ${formatMoney(amount)}, ${formatPercentage(amount, total)}`,
     });
     const title = element('title', {}); title.textContent = `${name} · ${formatPercentage(amount, total)} · ${formatMoney(amount)}`; path.append(title);
@@ -37,18 +39,18 @@ function drawSpendingChart(chartSvg, totals, onSelect) {
     const piece = element('g', {class:`slice-piece${selected ? ' is-selected' : ''}`});
     piece.style.setProperty('--lift-x', `${liftX}px`);
     piece.style.setProperty('--lift-y', `${liftY}px`);
-    piece.style.setProperty('--slice-color', categories[name]);
+    piece.style.setProperty('--slice-color', chartColors[name]);
     // A stationary hit area prevents hover flicker when the visible slice lifts.
     layer.append(element('path', {d:path.getAttribute('d'), fill:'transparent', class:'slice-hit', 'aria-hidden':'true'}),piece);
-    piece.append(element('path', {d:path.getAttribute('d'), fill:categories[name], class:'slice-halo', 'aria-hidden':'true'}));
+    piece.append(element('path', {d:path.getAttribute('d'), fill:chartColors[name], class:'slice-halo', 'aria-hidden':'true'}));
     layer.addEventListener('pointerenter', (event) => {
       if (event.pointerType !== 'touch') piece.classList.add('is-hovered');
     });
     layer.addEventListener('pointerleave', () => piece.classList.remove('is-hovered'));
     const activate = () => {
       const focused = document.activeElement === path;
-      selectedCategory = name; onSelect();
-      if (focused) chartSvg.querySelector(`[data-category="${name}"]`)?.focus();
+      if(!options.independent)selectedCategory = name; onSelect(name);
+      if (focused) [...chartSvg.querySelectorAll('[data-category]')].find(node=>node.dataset.category===name)?.focus();
     };
     layer.addEventListener('click', activate);
     path.addEventListener('keydown', (event) => {
@@ -77,7 +79,7 @@ function drawSpendingChart(chartSvg, totals, onSelect) {
       const edge = point(138,label.middle).map((value,index)=>value+(index ? label.liftY : label.liftX)), x = right ? 357 : 83;
       chartSvg.append(element('polyline', {points:`${edge} ${right ? 345 : 95},${label.y} ${right ? 353 : 87},${label.y}`, fill:'none', stroke:'var(--input-border)', 'stroke-width':1.3, 'aria-hidden':'true'}));
       const text = element('text', {x, y:label.y-3, class:'chart-label', 'text-anchor':right ? 'start' : 'end', 'aria-hidden':'true'});
-      const name = element('tspan', {x, dy:0}); name.textContent = label.name;
+      const name = element('tspan', {x, dy:0}); name.textContent = label.name.length>18?label.name.slice(0,17)+'…':label.name;
       const percent = element('tspan', {x, dy:18, class:'chart-label-percent'}); percent.textContent = formatPercentage(label.amount,total);
       text.append(name,percent); chartSvg.append(text);
     });

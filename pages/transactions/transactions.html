@@ -1,48 +1,224 @@
 <!DOCTYPE html>
-<!-- Render current-month purchases/planned payments and show spending totals and category comparisons. -->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Budgetron 3000™ · Transactions</title>
-  <!-- Load shared styles first, then this page's overrides. -->
-  <link rel="stylesheet" href="../../css%20files/styles.css">
-  <link rel="stylesheet" href="../../css%20files/chat.css">
-  <link rel="stylesheet" href="transactions.css">
-  <!-- Shared helpers load before this page's script; chat attaches afterward. -->
-  <script src="../../javascript%20files/theme.js"></script>
-  <script src="../../javascript%20files/state.js" defer></script>
-  <script src="../../javascript%20files/transactions.js" defer></script>
-  <script src="../../javascript%20files/ui.js" defer></script>
-  <script src="transactions.js" defer></script>
-  <!-- Chat attaches without blocking rendering. -->
-
-  <script src="../../javascript%20files/chat.js" defer></script>
-</head>
-<body>
-  <!-- Shared sidebar: branding, page navigation and demo reset. -->
-  <header>
-    <a class="brand" href="../home/home.html" aria-label="Budgetron 3000 trademark home"><span class="wordmark"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="15" rx="5"/><path d="M12 6V3m-3 13h6"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>Budgetron <b>3000</b><sup>™</sup></span><span class="brand-tagline">little steps. big plans.</span></a>
-    <nav aria-label="Main navigation">
-      <a href="../home/home.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-6v-7H9v7H3z"/></svg></span><span>Home</span></a>
-      <a href="../goals/goals.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="m8 14-2 8 6-3 6 3-2-8M12 5l1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 7.3l2-.3z"/></svg></span><span>Goals</span></a>
-      <a href="../accounts/accounts.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M6 15h5"/></svg></span><span>Accounts</span></a>
-      <a href="../spending-chart/spending-chart.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3a8 8 0 0 1 6 6h-6z"/></svg></span><span>Pie Chart</span></a>
-      <a href="../transactions/transactions.html" aria-current="page"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="9" cy="6" rx="6" ry="3"/><path d="M3 6v5c0 4 12 4 12 0V6M3 11v5c0 4 12 4 12 0v-5M16 10c7 0 7 6 0 6m-1 4c7 2 9-1 9-4v-3"/></svg></span><span>Transactions</span></a>
-      <a href="../calendar/calendar.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m3 0h2m3 0h1"/></svg></span><span>Calendar</span></a>
-    </nav>
-    <div class="sidebar-bottom"><p><strong>My demo account</strong>$3,000 monthly income</p></div>
-  </header>
-  <!-- Main content is refreshed by this page's JavaScript renderer. -->
-  <main>
-    <div class="page-title"><div><h1>Transactions</h1><p>Review your purchases and planned payments.</p></div><div class="page-actions"><label class="theme-picker">Theme<select id="color-theme" aria-label="Color Theme"><option value="cream">Cream</option><option value="sage">Sage</option><option value="ocean">Ocean</option><option value="rose">Rose</option></select></label><span class="badge">Demo</span><button id="theme-toggle" class="secondary theme-toggle" type="button" aria-pressed="false"><span>Dark Mode</span><span class="theme-switch" aria-hidden="true"></span></button></div></div>
-    <p class="notice">Sample money only. Based on your current-month purchases.</p>
-    <section id="spending-page">
-      <div class="summary"><div><span>Monthly income</span><strong>$3,000.00</strong></div><div><span>Spent this month</span><strong id="spending-total"></strong></div><div><span>Income left after spending</span><strong id="spending-left"></strong></div></div>
-      <div class="spending-layout"><div><article class="panel"><h2>By category</h2><div id="spending-breakdown"></div><p class="small"><a href="../spending-chart/spending-chart.html">Explore the pie chart →</a></p></article><article class="panel tip-panel"><h2>A little perspective</h2><p id="spending-tip"></p></article></div><article class="panel"><div class="section-title"><h2>Your transactions</h2><a class="text-button" href="../calendar/calendar.html?add=transaction">+ Add transaction</a></div><p class="small">This month’s purchases and planned payments. Only purchases count toward spending.</p><ul id="all-spending" class="payment-list"></ul></article></div>
-    </section>
-    <footer>Changes are saved in this browser. <button id="reset-demo" class="text-button">Reset demo</button></footer>
-    <p id="status" role="status" class="status"></p>
-  </main>
-</body>
+<!-- Transactions: authenticated profile data, shared theme and reusable budget controls. -->
+<html lang="en" data-session="loading">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      Budgetron 3000 · Transactions
+    </title>
+    <link rel="stylesheet" href="../../css%20files/styles.css">
+    <link rel="stylesheet" href="../../css%20files/chat.css">
+    <link rel="stylesheet" href="transactions.css">
+    <script src="../../javascript%20files/theme.js">
+    </script>
+    <script src="../../javascript%20files/budget-core.js" defer>
+    </script>
+    <script src="../../javascript%20files/state.js" defer>
+    </script>
+    <script src="../../javascript%20files/charts.js" defer>
+    </script>
+    <script src="../../javascript%20files/transactions.js" defer>
+    </script>
+    <script src="../../javascript%20files/goals.js" defer>
+    </script>
+    <script src="../../javascript%20files/ui.js" defer>
+    </script>
+    <script src="transactions.js" defer>
+    </script>
+    <script src="../../javascript%20files/chat.js" defer>
+    </script>
+    <script src="../../javascript%20files/session.js" defer>
+    </script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="../home/home.html" aria-label="Budgetron 3000 trademark home">
+        <span class="wordmark">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="6" width="18" height="15" rx="5"/>
+            <path d="M12 6V3m-3 13h6"/>
+            <circle cx="8" cy="12" r="1" fill="currentColor"/>
+            <circle cx="16" cy="12" r="1" fill="currentColor"/>
+          </svg>
+          Budgetron
+          <b>
+            3000
+          </b>
+          <sup>
+            ™
+          </sup>
+        </span>
+        <span class="brand-tagline">
+          little steps. big plans.
+        </span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="../home/home.html">
+          <span class="nav-icon" aria-hidden="true">
+            ⌂
+          </span>
+          <span>
+            Home
+          </span>
+        </a>
+        <a href="../goals/goals.html">
+          <span class="nav-icon" aria-hidden="true">
+            ◎
+          </span>
+          <span>
+            Goals
+          </span>
+        </a>
+        <a href="../income/income.html">
+          <span class="nav-icon" aria-hidden="true">
+            ↗
+          </span>
+          <span>
+            Income
+          </span>
+        </a>
+        <a href="../expenses/expenses.html">
+          <span class="nav-icon" aria-hidden="true">
+            ↘
+          </span>
+          <span>
+            Expenses
+          </span>
+        </a>
+        <a href="../spending-chart/spending-chart.html">
+          <span class="nav-icon" aria-hidden="true">
+            ◔
+          </span>
+          <span>
+            Pie Chart
+          </span>
+        </a>
+        <a href="../transactions/transactions.html" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">
+            ≡
+          </span>
+          <span>
+            Transactions
+          </span>
+        </a>
+        <a href="../calendar/calendar.html">
+          <span class="nav-icon" aria-hidden="true">
+            ▦
+          </span>
+          <span>
+            Calendar
+          </span>
+        </a>
+      </nav>
+      <div class="sidebar-bottom">
+      </div>
+    </header>
+    <main>
+      <div class="page-title">
+        <div>
+          <h1>
+            Transactions
+          </h1>
+          <p>
+            A complete overview of money coming in and going out.
+          </p>
+        </div>
+        <div class="page-actions">
+          <label class="theme-picker">
+            Theme
+            <select id="color-theme" aria-label="Color Theme">
+              <option value="cream">
+                Cream
+              </option>
+              <option value="sage">
+                Sage
+              </option>
+              <option value="ocean">
+                Ocean
+              </option>
+              <option value="rose">
+                Rose
+              </option>
+            </select>
+          </label>
+          <button id="theme-toggle" class="secondary theme-toggle" type="button" aria-pressed="false">
+            <span>
+              Dark Mode
+            </span>
+            <span class="theme-switch" aria-hidden="true">
+            </span>
+          </button>
+        </div>
+      </div>
+      <p class="notice">
+        Your profile uses saved local data. No real banks or money transfers.
+      </p>
+      <div class="summary">
+        <div>
+          <span>
+            Total income
+          </span>
+          <strong id="transactions-income">
+          </strong>
+        </div>
+        <div>
+          <span>
+            Total expenses
+          </span>
+          <strong id="transactions-expenses">
+          </strong>
+        </div>
+        <div>
+          <span>
+            Remaining
+          </span>
+          <strong id="transactions-net">
+          </strong>
+        </div>
+      </div>
+      <article class="panel">
+        <div class="section-title">
+          <h2>
+            All Transactions
+          </h2>
+          <a class="button-link" href="../income/income.html">
+            Add income
+          </a>
+          <a class="button-link" href="../expenses/expenses.html">
+            Add expense
+          </a>
+        </div>
+        <label>
+          Show
+          <select id="transaction-filter">
+            <option value="all">
+              All entries
+            </option>
+            <option value="income">
+              Income
+            </option>
+            <option value="purchase">
+              Expenses
+            </option>
+            <option value="planned">
+              Planned expenses
+            </option>
+          </select>
+        </label>
+        <p class="small">
+          Complete history across all dates. Planned expenses are listed but excluded from totals.
+        </p>
+        <ul id="all-spending" class="payment-list">
+        </ul>
+      </article>
+      <footer>
+        <button id="reset-demo" type="button" class="text-button">
+          Reset profile
+        </button>
+      </footer>
+      <p id="status" role="status" class="status">
+      </p>
+    </main>
+  </body>
 </html>

@@ -1,83 +1,41 @@
-# Budgetron 3000™ — Feature Guide
+# Budgetron 3000 — Current Features
 
-Updated October 30, 2026. This is a class-project budgeting MVP using pretend money, with optional real AI chat.
+## Sign-up, sign-in and sign-out
 
-## Open the app
+Run the local Node server with **Start Budgetron.bat**. New users create an account using a name, email and password of 8–128 characters. Existing users sign in and can sign out from every page, including mobile. Each user has a separate saved budget. New profiles start empty.
 
-- **Budget demo:** double-click `index.html` to open Home.
-- **AI chat:** install Node.js 22 or newer, copy `.env.example` to `.env` if needed, and set `GEMINI_API_KEY` to your own [Google AI Studio key](https://aistudio.google.com/apikey). Keep an existing `.env` and its key private.
-- Double-click **Start Budgetron.bat**. It starts the local server and opens the app in Brave when available. Keep the server window open. If the browser does not open, use the printed URL, normally `http://127.0.0.1:3000`.
-- Alternatively, run `node server/server.mjs` from the project folder. The launcher can also use the Node runtime bundled with Codex on this computer.
+The presentation user is **Jordan Demo**, email **demo@budgetron.local**, password **BudgetronDemo3000!**. **Use demo credentials** fills the login form without bypassing sign-in. Initial dummy data includes $3,000 income, $1,490 expenses, $1,510 remaining, two goals, and planned calendar payments. Reset profile restores this sample for the demo user; it clears other profiles after confirmation.
 
-Saving a new key in `.env` does not require restarting. Changing `PORT` requires restarting and using the new printed URL. AI chat cannot run through GitHub Pages, VS Code Live Server, or a double-clicked HTML file alone.
+## Pages
 
-## Pages and features
-
-| Page | What users can do |
+| Page | Current behavior |
 | --- | --- |
-| **Home** | See monthly income, purchase totals, income left, the selected savings goal, an interactive spending chart, and the three most recent purchases. |
-| **Goals** | Add, select, edit, or delete goals. Set a target, optional date, and either one savings account or all savings accounts. View a progress ring and a calculated monthly savings estimate. Deleting asks for confirmation; deleting the last goal leaves an empty state after reload. |
-| **Accounts** | View checking, savings, and credit card demo accounts. Add pretend accounts, select floating wallet cards, adjust monthly allocations, and save or simulate a transfer rule. Allocations cannot exceed the $3,000 income. |
-| **Pie Chart** | Select a spending category to see its amount, percentage, purchase count, average and largest purchase, share of income, and dated transaction details. |
-| **Transactions** | See this month's purchases and planned payments, category totals, and a calculated spending summary. Add transactions through the calendar form, or edit/delete existing records. |
-| **Calendar** | Navigate months, select a day, jump to Today, or show All events for the visible month. Add planned payments or unexpected purchases. See the next scheduled demo transfer alongside other events. |
+| Home | Monthly income, expenses and remaining money; expense chart; goal widget with **View Goals**; recent income and expense records. |
+| Goals | Add/select/edit/delete goals with optional deadlines. Progress follows **all recorded income minus all recorded expenses**, clamped to zero. Multiple goals share the same available amount; they do not reserve money. |
+| Income | Record income sources; edit/delete entries; view income history; create income categories and choose chart colors. |
+| Expenses | Record expenses or planned payments; edit/delete entries; view expense history; create expense categories and choose chart colors. |
+| Pie Chart | Separate monthly income and expense donuts, each with its own selection, labels, percentages, category buttons and transaction details. |
+| Transactions | Complete overview across all dates: total income, total expenses, net remaining, and filterable income/expense/planned-payment history. |
+| Calendar | Existing monthly payment/transaction calendar retained. Shared entries and custom categories stay compatible with the ledgers; planned payments remain outside totals. |
 
-The sample profile has **$3,000 monthly income**, **$2,200 checking**, **$800 savings**, and **$150 credit card debt**. Initial purchases total **$1,490**, leaving **$1,510** of monthly income after recorded spending.
+The Accounts tab has been removed. Old Accounts URLs redirect to Income.
 
-### Transactions and money rules
+## Money rules
 
-Use **Edit** or **Delete** on recent purchases, transaction lists, category details, or calendar entries. Edit the description, amount, date, category, or purchase/planned type. Delete asks for confirmation. Spending totals, charts, and calendar entries refresh together.
+Amounts are stored as integer cents and validated on the server. Only recorded income and expenses affect totals and goals. Planned payments do not count until changed to an expense. Dates and transaction types can be edited; changing an income entry to an expense updates both totals and goal progress. Category names must be unique within income or expense, case-insensitively; the same name can be used once in each type.
 
-Only purchases in the current month count as spending. Planned payments and calendar entries do not change account balances. Allocations plan money without moving it. Goals follow savings balances without reserving money, so goals tracking the same accounts share progress. Deleting a goal preserves all money records.
+Goal progress uses the complete ledger, while Home and both pie charts summarize the current month. Transactions deliberately shows all dates. Editing/deleting goals never changes the ledger.
 
-**Simulate transfer** changes pretend balances only. Credit card payments reduce the amount owed. A repeating rule advances to the next month, clamping the date for shorter months; a one-time rule clears after simulation. Transfers never run automatically in the background.
+## Storage and privacy
 
-### Appearance and navigation
+User budgets and salted password hashes are stored locally outside the project in `Codex/Work/Budgetron Data/users.json`, under the current Windows user. API responses never expose password hashes. Session cookies are HttpOnly and SameSite=Strict. Sign-out invalidates the session. Server restarts retain profiles but require sign-in again. Stale revisions and saves from tabs belonging to a different signed-in user are rejected.
 
-- The selected sidebar background slides between tabs in 180 ms, and sidebar links do not underline on hover or focus. Pages use a simple 120 ms, 6 px entry slide with normal browser navigation. There is no exit-animation wait, advanced transition mode, or transition settings control. Reduced-motion preferences disable the slide. Ask Budgetron stays above page content. See [TRANSITIONS.md](TRANSITIONS.md) for the CSS location.
-- Choose **Cream, Sage, Ocean, or Rose** and toggle **Dark Mode** on any page. Choices are remembered; the initial mode follows the device preference.
-- Both spending charts show category labels and percentages. Hover lifts a slice with a glow and shadow; clicking keeps it selected. Tab and Enter/Space also select slices.
-- Wallet cards lift and tilt on hover or remain raised when selected.
-- Calendar dates show contrasting hover/focus colors. Text actions provide hover and keyboard-focus feedback.
-- Responsive layouts adapt to smaller screens.
+This is a localhost classroom prototype with no email verification, password-reset flow, real banking or public production deployment. Existing browser-only demo data is not silently imported into a new profile. The old CS100 sharing copy and ZIP are snapshots and are not automatically refreshed by this update.
 
-## Ask Budgetron
+## Interface and chat
 
-The floating **Ask Budgetron** button opens Gemini chat with rounded suggested-question cards, a message box, **New Chat**, and conversation history retained within the browser tab across pages. Connection errors explain how to start the local server; failed replies offer retry.
+Cream, Sage, Ocean and Rose palettes, Dark Mode, simple page-entry motion and the lightweight sliding sidebar selection remain. Reduced motion is respected. Sidebar links do not underline on hover/focus. Ask Budgetron stays on top, can be dragged or moved with Alt+arrow keys, and can be hidden outside Home.
 
-Drag the button with a mouse or touch. Its position is remembered across pages and reloads and adjusts to screen resizing. Keyboard users can focus it and press **Alt + an arrow key** to move it.
+Signed-in users can chat with Gemini after adding a private API key to `.env`. Obvious unrelated questions are refused locally without Gemini quota. Uncertain requests reach Gemini and then pass through the structured-response scope filter. Included budget context is built from the authenticated profile's saved data, rather than trusting a submitted snapshot. The model cannot edit records or move money. Live Gemini answers were not used for verification.
 
-Open chat → **Position & visibility**:
-
-- **Show only on Home** hides the button on every other page. It always remains available on Home, where users can turn the other pages back on.
-- **Reset position** returns it to its default corner.
-
-**Include my sample budget** sends a fresh snapshot of income, category totals, accounts, goals, recent purchases, upcoming payments, and the transfer rule. Turn it off to ask app-help questions without sharing the snapshot. Questions must still concern Budgetron or budgeting within this app.
-
-Before contacting Gemini, a local server filter rejects clearly unrelated requests such as recipes, weather, poems, unrelated coding, and homework. These local refusals make no Gemini request, use no provider tokens/quota, and do not consume the app's ten-model-request allowance. The filter is intentionally permissive: budgeting/app language, mixed questions, and uncertain follow-ups pass through to Gemini. It will miss some off-topic requests and may occasionally misclassify one.
-
-The assistant explains app features and the tracked budget. It cannot edit records, connect banks, move money, or browse the web. Off-topic replies are replaced with a fixed app-focused message. Server-side instructions and structured-response validation reduce off-topic answers but do not guarantee model behavior.
-
-Messages and any included snapshot are sent to Google. AI replies can be wrong. Model availability, quotas, pricing, and data handling depend on the Google project and service terms; consult [Gemini pricing](https://ai.google.dev/gemini-api/docs/pricing) and [API key setup](https://ai.google.dev/gemini-api/docs/api-key). The model is configurable through `GEMINI_MODEL`; the app does not enable billing or switch models automatically.
-
-## Saving, setup, and limits
-
-Budget changes are stored in this browser when storage is available. Local files and the local-server website use separate storage; changing browser, origin, or file location can also change which saved demo is loaded. The app has no sign-in or cross-device budget sync.
-
-**Reset demo** restores the sample budget after confirmation. Theme settings, chat display preferences, and tab conversation history are separate from budget data. **New Chat** clears the conversation history.
-
-The app uses plain HTML, CSS, JavaScript, inline SVG icons, and a dependency-free Node server. Source files contain purpose and logic comments with descriptive shared helpers. See [README.md](../README.md) for the folder layout.
-
-The local server keeps the API key outside browser code, blocks private files and server source, validates requests, and limits chat to 10 requests per minute. Use sample data. There are no real bank connections, stored bank passwords, payment processing, or real automatic transfers.
-
-## Verification
-
-Run `node --test` from the project root. There are **20 individual checks** across three files; Node reports **21** because it also counts the parent server test group.
-
-| Test file | Coverage |
-| --- | --- |
-| `tests/goal-state.test.mjs` | Five checks for goal selection/deletion, preservation of money records, empty-state persistence, and migration of older saves. |
-| `tests/chat-policy.test.mjs` | Eight checks for valid replies, malformed/off-topic output, separation of snapshots from trusted instructions, and conservative local rejection/preservation of follow-ups. |
-| `tests/server.test.mjs` | Seven checks for page assets, legacy URLs, private-file protection, chat contracts, invalid/cross-site requests, and proof that local refusals skip the provider/configuration and preserve model-call quota. |
-
-Separate browser checks verified all six pages, mouse/touch dragging, position persistence, keyboard movement, Home-only visibility/restoration, position reset, phone bounds, chat layering during page switches, Back navigation, reduced-motion behavior, and the browser-to-server chat flow using a simulated provider reply. These browser checks are separate from `node --test`; simulated replies do not verify a live Gemini call or require an API key.
+See [TESTING.md](TESTING.md) for the 39 automated checks and [PRESENTATION.md](PRESENTATION.md) for the demo walkthrough.

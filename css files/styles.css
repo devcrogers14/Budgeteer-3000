@@ -1199,3 +1199,15 @@ nav.has-sliding-highlight a[aria-current="page"] { background:transparent; borde
 /* Keep the sidebar free of underlines while retaining normal keyboard outlines. */
 nav a[href]:not(.brand):not(.button-link):hover,
 nav a[href]:not(.brand):not(.button-link):focus-visible { text-decoration:none; }
+
+/* Do not flash another profile while the current session is loading. */
+:root[data-session="loading"] body { visibility:hidden; }
+.ledger-empty { color:var(--muted); }
+input[type="color"] { min-height:44px; }
+@media(max-width:760px) { .page-actions { flex-wrap:wrap; } }
+
+/* Shared two-panel layouts and bounded chart sizes for Income, Expenses and Charts. */
+.two-column { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; align-items:start; }
+.overview-donut { display:block; width:min(100%,380px); height:auto; margin:0 auto; overflow:visible; }
+.chart-categories button { overflow-wrap:anywhere; }
+@media(max-width:900px) { .two-column { grid-template-columns:1fr; } }
