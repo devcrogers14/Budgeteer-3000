@@ -1,5 +1,11 @@
 # Verification
 
+## UI/mobile inspection — November 2, 2026
+
+All 56 automated tests passed after the UI changes and folder renames. Browser inspection covered all seven app pages at desktop, 390px and 320px; no horizontal page overflow was found. Buttons were checked for hover and keyboard focus in all four palettes in both light/dark modes. Screenshots of Home, Goals, Expenses and Calendar were visually reviewed.
+
+Interaction checks covered custom categories, expense add/edit/delete, goal add/cancel-delete/delete, chart selection, calendar navigation and reduced motion. A delayed server response confirmed the current theme background appears while content is loading, with one session request. Touch emulation checked sign-in, navigation, input sizes and chat bounds in portrait/landscape. File-mode checks made zero HTTP requests. No live Gemini call was made.
+
 ## Browser-only presentation mode — November 2, 2026
 
 All 56 automated tests passed. A clean Brave browser opened index.html directly as a file and verified demo sign-in, every tab, UI income saving, reload persistence, theme/palette, signup, account isolation, sign-out/relogin and Home-only chat. No HTTP requests were made. A separate server browser check verified sign-in, a simulated AI answer and sign-out. Existing server data and live API keys were not used. Browser-file and server stores are separate.

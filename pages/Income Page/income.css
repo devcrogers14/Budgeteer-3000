@@ -1,1 +1,4 @@
-/* Shared layout and colors come from css files/styles.css. */
+/* Shared layout and colors come from global css files/styles.css. */
+
+/* Separate the submit action from the final category field. */
+#ledger-form > button[type="submit"], #category-form > button[type="submit"] { margin-top:8px; }

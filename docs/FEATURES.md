@@ -49,3 +49,11 @@ Budgets, categories, goals, theme/palette, chat position, Home-only visibility, 
 Navigation/sign-out wait for real pending writes, and the browser warns before closing/reloading unsaved changes. Preferences are validated and updated separately from ledger revisions, so a theme change cannot replace budget data. Ordinary page changes keep normal navigation and the lightweight animations.
 
 All eight page folders contain their own matching HTML/JS/CSS; index.html remains at the project root. See [QA-REPORT.md](QA-REPORT.md) for the site audit and [CHANGELOG.md](CHANGELOG.md) for version differences.
+
+## Mobile and interaction polish — November 2, 2026
+
+Mobile navigation uses a swipeable row that reveals the selected page. Phone forms use 16px inputs, touch controls have generous heights, and narrow summaries stack without horizontal page overflow. Dialogs and chat stay within the viewport, with bottom space for the launcher and device safe areas. Buttons show subtle color/shadow hover feedback and visible keyboard outlines. Ledger/category submit buttons have an 8px gap from their final field.
+
+Page loading immediately uses the theme background and a tab-local visual preview; the server session read starts while deferred scripts are loading. Profile content stays hidden until authenticated data is ready. Only visual settings are cached for this preview.
+
+Shared styles live in `global css files/`, shared scripts in `global javascript files/`, and page-specific trios in lowercase `pages/`.

@@ -2,6 +2,15 @@
 
 Labels describe saved snapshots; F/W prototype labels are not original release numbers. Older code/ZIP files are preserved, with notes beside each school archive.
 
+## UI polish, mobile layout and shared folders — November 2, 2026
+
+- Use subtle gradient/shadow feedback for buttons, retain keyboard outlines, and keep underlines for ordinary text links.
+- Add 8px between ledger/category fields and their submit buttons.
+- Match the HTML loading background to the theme, preview only the current tab's visual settings, and start the server session read earlier without adding a second request. Clear the preview on sign-out.
+- Improve mobile navigation, touch targets, input readability, summary cards, dialogs, calendar and chat controls; keep the current navigation item visible.
+- Rename shared folders to global css files and global javascript files; lowercase pages and update every reference. Preserve earlier server page bookmarks.
+- Pass 56 automated tests plus desktop, 390px/320px, all-palette light/dark, keyboard, CRUD, delayed-loading, reduced-motion, and touch portrait/landscape browser checks. No live AI quota used.
+
 ## Enable browser-only budgeting with optional AI — November 2, 2026
 
 - Open index.html directly for budgeting, demo accounts, sign-up/sign-in/out, charts, goals, transactions and calendar without installation or an API key.

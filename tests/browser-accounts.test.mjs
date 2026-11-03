@@ -1,9 +1,9 @@
 // Browser-only accounts are tested with disposable memory storage, never real browser profiles.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import BrowserAccounts from '../javascript files/browser-accounts.js';
-import BudgetMath from '../javascript files/budget-core.js';
-import BudgetPreferences from '../javascript files/preferences.js';
+import BrowserAccounts from '../global javascript files/browser-accounts.js';
+import BudgetMath from '../global javascript files/budget-core.js';
+import BudgetPreferences from '../global javascript files/preferences.js';
 function memoryStorage(){const data=new Map();return {getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key),data};}
 function setup(){const storage=memoryStorage(),sessionStorage=memoryStorage();const options={storage,sessionStorage,budgetMath:BudgetMath,preferences:BudgetPreferences};return {...options,store:BrowserAccounts.createBrowserStore(options)};}
 const post=(store,route,body)=>store.request(route,{method:'POST',body:JSON.stringify(body)});

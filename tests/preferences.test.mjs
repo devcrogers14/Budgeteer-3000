@@ -6,7 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {defaultPreferences,mergePreferences} from '../server/preferences.mjs';
 import {createAuthStore} from '../server/auth.mjs';
-import BudgetMath from '../javascript files/budget-core.js';
+import BudgetMath from '../global javascript files/budget-core.js';
 const account={name:'Preference User',email:'prefs@example.com',password:'Password123!'};
 test('default preferences are isolated objects with no inherited history',()=>{const first=defaultPreferences(),second=defaultPreferences();first.chat.homeOnly=true;first.chatHistory.push({role:'user',content:'Hello'});assert.equal(second.chat.homeOnly,false);assert.equal(second.chatHistory.length,0);});
 test('partial settings updates preserve unrelated fields and do not mutate inputs',()=>{const original=defaultPreferences();original.chat.position={x:0.4,y:0.5};const merged=mergePreferences(original,{theme:'dark',chat:{homeOnly:true}});assert.equal(merged.chat.shareBudget,true);assert.deepEqual(merged.chat.position,{x:0.4,y:0.5});assert.equal(original.theme,'system');assert.equal(original.chat.homeOnly,false);});

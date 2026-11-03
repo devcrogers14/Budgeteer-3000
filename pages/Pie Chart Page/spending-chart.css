@@ -1,4 +1,4 @@
-/* Spending Chart page styles. Shared typography, colors and controls come from css files/styles.css; this file handles this page's layout and responsive details. */
+/* Spending Chart page styles. Shared typography, colors and controls come from global css files/styles.css; this file handles this page's layout and responsive details. */
 .pie-page-layout { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr); gap:24px; align-items:start; }
 .big-chart-panel { background:transparent; box-shadow:none; padding:12px; }
 .donut-wrap { position:relative; width:min(100%,390px); aspect-ratio:1; margin:0 auto; }

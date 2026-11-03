@@ -24,7 +24,7 @@ async function setup(testContext,overrides={}){
 test('each authenticated page has its own assets and all links load',async testContext=>{
   const {request}=await setup(testContext);
   for(const page of ['home','goals','income','expenses','spending-chart','transactions','calendar','auth']){
-    const path=`Pages/${pageFolders[page]}/${page}.html`,response=await request('/'+path);assert.equal(response.status,200);
+    const path=`pages/${pageFolders[page]}/${page}.html`,response=await request('/'+path);assert.equal(response.status,200);
     const html=await response.text();assert.equal(html,await readFile(new URL(path,root),'utf8'));assert.ok(html.includes(`href="${page}.css"`));assert.ok(html.includes(`src="${page}.js"`));
     const scripts=[];for(const [,target]of html.matchAll(/(?:href|src)="([^"#]+)"/g)){
       if(/^(https?:|data:)/.test(target))continue;const localURL=new URL(target,new URL(path,root));await access(fileURLToPath(localURL));
@@ -35,7 +35,7 @@ test('each authenticated page has its own assets and all links load',async testC
 });
 test('legacy page URLs redirect to the new pages and preserve query parameters',async testContext=>{
   const {request}=await setup(testContext);for(const [old,target]of [['accounts','income'],['goals','goals'],['pie','spending-chart'],['spending','transactions'],['calendar','calendar'],['index','home']]){
-    const response=await request('/'+old+'.html?category=Food',{redirect:'manual'});assert.equal(response.status,302);assert.equal(response.headers.get('location'),`/Pages/${pageFolders[target]}/${target}.html?category=Food`);
+    const response=await request('/'+old+'.html?category=Food',{redirect:'manual'});assert.equal(response.status,302);assert.equal(response.headers.get('location'),`/pages/${pageFolders[target]}/${target}.html?category=Food`);
   }
 });
 test('private files and server source cannot be downloaded',async testContext=>{const {request}=await setup(testContext);for(const path of ['/.env','/.git/config','/server/auth.mjs','/server/server.mjs','/users.json','/tests/auth.test.mjs'])assert.equal((await request(path)).status,404,path);});
@@ -64,7 +64,7 @@ test('signup, budget saves, conflict rejection, isolation and sign-out work over
   assert.equal((await save({budget:session.budget,revision:0,userId:session.user.id})).status,409);
   assert.equal((await(await fetch(base+'/api/budget',{headers:{Cookie:otherCookie}})).json()).budget.events.length,0);
   await fetch(base+'/api/signout',{method:'POST',headers:{Cookie:cookie}});assert.equal((await fetch(base+'/api/session',{headers:{Cookie:cookie}})).status,401);
-  assert.equal((await fetch(base+'/Pages/Home Page/home.html',{redirect:'manual'})).headers.get('location'),'/Pages/Sign In Page/auth.html');
+  assert.equal((await fetch(base+'/pages/Home Page/home.html',{redirect:'manual'})).headers.get('location'),'/pages/Sign In Page/auth.html');
 });
 
 
@@ -85,15 +85,15 @@ test('previous nested page links redirect to their named folders',async testCont
   const {request}=await setup(testContext);
   for(const [slug,folder] of Object.entries(pageFolders)){
     const response=await request('/pages/'+slug+'/'+slug+'.html?source=bookmark',{redirect:'manual'});
-    assert.equal(response.status,302);assert.equal(response.headers.get('location'),'/Pages/'+folder+'/'+slug+'.html?source=bookmark');
+    assert.equal(response.status,302);assert.equal(response.headers.get('location'),'/pages/'+folder+'/'+slug+'.html?source=bookmark');
   }
 });
 
 test('every reorganized app page still requires sign-in',async testContext=>{
   const {base}=await setup(testContext);
   for(const [slug,folder] of Object.entries(pageFolders)){
-    const response=await fetch(base+'/Pages/'+folder+'/'+slug+'.html',{redirect:'manual'});
+    const response=await fetch(base+'/pages/'+folder+'/'+slug+'.html',{redirect:'manual'});
     assert.equal(response.status,slug==='auth'?200:302);
-    if(slug!=='auth')assert.equal(response.headers.get('location'),'/Pages/Sign In Page/auth.html');
+    if(slug!=='auth')assert.equal(response.headers.get('location'),'/pages/Sign In Page/auth.html');
   }
 });

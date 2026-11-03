@@ -43,8 +43,8 @@ function initialPreferences(userId){
 }
 (async()=>{
   try{
-    const response=await BudgetronAccounts.request('/api/session',{cache:'no-store'});
-    if(response.status===401){location.replace(BudgetronAccounts.pageURL('Pages/Sign In Page/auth.html'));return;}
+    const response=await window.BudgetronSessionRequest||await BudgetronAccounts.request('/api/session',{cache:'no-store'});
+    if(response.status===401){location.replace(BudgetronAccounts.pageURL('pages/Sign In Page/auth.html'));return;}
     if(!response.ok)throw new Error('Could not load your profile.');
     const result=await response.json();signedInUser=result.user;budgetData=result.budget;budgetRevision=result.revision;initializeGoals();
     window.BudgetronSession.ready=true;
@@ -59,7 +59,7 @@ function initialPreferences(userId){
         await Promise.allSettled([budgetSaveQueue,preferenceSaveQueue]);
         if(lastSaveError&&!confirm('Some changes could not be saved. Sign out anyway?'))return;
         const response=await BudgetronAccounts.request('/api/signout',{method:'POST'});if(!response.ok)throw new Error('Could not sign out. Please try again.');
-        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');location.replace(BudgetronAccounts.pageURL('Pages/Sign In Page/auth.html'));
+        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');sessionStorage.removeItem(themePreviewKey);location.replace(BudgetronAccounts.pageURL('pages/Sign In Page/auth.html'));
       }catch(error){getElement('status').textContent=error.message;}
     });
   }catch(error){document.documentElement.dataset.session='ready';showSaveError(error);}

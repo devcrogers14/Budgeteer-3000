@@ -5,7 +5,7 @@ document.getElementById('auth-switch').addEventListener('click',()=>{createAccou
 document.getElementById('fill-demo').addEventListener('click',()=>{if(createAccount)document.getElementById('auth-switch').click();document.getElementById('auth-email').value='demo@budgetron.local';document.getElementById('auth-password').value='BudgetronDemo3000!';message.textContent='Demo credentials filled. Click Sign in to begin the presentation.';});
 form.addEventListener('submit',async event=>{
   event.preventDefault();submit.disabled=true;message.textContent='';
-  try{const response=await BudgetronAccounts.request(createAccount?'/api/signup':'/api/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('auth-name').value,email:document.getElementById('auth-email').value,password:document.getElementById('auth-password').value})});const result=await response.json();if(!response.ok)throw new Error(result.error);sessionStorage.removeItem('budgetron-chat-history-v1');location.assign(BudgetronAccounts.pageURL('Pages/Home Page/home.html'));}
+  try{const response=await BudgetronAccounts.request(createAccount?'/api/signup':'/api/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('auth-name').value,email:document.getElementById('auth-email').value,password:document.getElementById('auth-password').value})});const result=await response.json();if(!response.ok)throw new Error(result.error);sessionStorage.removeItem('budgetron-chat-history-v1');location.assign(BudgetronAccounts.pageURL('pages/Home Page/home.html'));}
   catch(error){message.textContent=error.message;}finally{submit.disabled=false;}
 });
 

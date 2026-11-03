@@ -1,7 +1,7 @@
 // Unit tests for pure budget arithmetic, category validation and goal progress. No browser or AI calls.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import BudgetMath from '../javascript files/budget-core.js';
+import BudgetMath from '../global javascript files/budget-core.js';
 const demo=()=>BudgetMath.createBudget(true,new Date(2026,9,30));
 test('new users start with an empty ledger and no goals',()=>{const budget=BudgetMath.createBudget();assert.equal(budget.events.length,0);assert.equal(budget.goals.length,0);assert.equal(BudgetMath.totalIncome(budget),0);});
 test('demo income, expense and remaining totals are exact cents',()=>{const budget=demo();assert.equal(BudgetMath.totalIncome(budget),300000);assert.equal(BudgetMath.totalExpenses(budget),149000);assert.equal(BudgetMath.goalProgress(budget,budget.goals[0]).amount,151000);});

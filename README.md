@@ -30,7 +30,7 @@ Each page owns its HTML, JavaScript and CSS together. Only the entry page stays 
 
 ```text
 index.html
-Pages/
+pages/
   Sign In Page/  auth.html, auth.js, auth.css
   Home Page/  home.html, home.js, home.css
   Goals Page/  goals.html, goals.js, goals.css
@@ -39,8 +39,8 @@ Pages/
   Pie Chart Page/  spending-chart.html, spending-chart.js, spending-chart.css
   Transactions Page/  transactions.html, transactions.js, transactions.css
   Calendar Page/  calendar.html, calendar.js, calendar.css
-javascript files/ shared scripts used by multiple pages
-css files/        shared theme, layout and chat styles
+global javascript files/ shared scripts used by multiple pages
+global css files/        shared theme, layout and chat styles
 server/           local APIs, authentication, preferences and AI policy
 tests/            automated checks
 docs/             features, tests, presentation, version notes and design references
@@ -52,13 +52,13 @@ See [VERSION.md](VERSION.md) for the current version and [CHANGELOG.md](docs/CHA
 
 | Folder/file | Purpose |
 | --- | --- |
-| `Pages/` | Each app page has its own HTML/CSS/JS; `Sign In Page/` contains sign-in/signup. |
-| `javascript files/budget-core.js` | Pure calculations, sample data and validation shared with Node unit tests. |
-| `javascript files/state.js`, `session.js`, `ui.js` | In-memory browser state, authenticated server persistence and shared controls. |
-| `javascript files/transactions.js`, `goals.js`, `charts.js` | Reusable entry editing, net-income goal UI and interactive SVG charts. |
-| `css files/` | Shared themes, layout, simple entry motion and draggable chat styling. |
-| `javascript files/browser-accounts.js` | Browser-only sign-in, salted password hashes and per-profile local storage; server requests pass through in HTTP mode. |
-| `javascript files/preferences.js` | Settings validation shared by browser and server stores. |
+| `pages/` | Each app page has its own HTML/CSS/JS; `Sign In Page/` contains sign-in/signup. |
+| `global javascript files/budget-core.js` | Pure calculations, sample data and validation shared with Node unit tests. |
+| `global javascript files/state.js`, `session.js`, `ui.js` | In-memory browser state, authenticated server persistence and shared controls. |
+| `global javascript files/transactions.js`, `goals.js`, `charts.js` | Reusable entry editing, net-income goal UI and interactive SVG charts. |
+| `global css files/` | Shared themes, layout, simple entry motion and draggable chat styling. |
+| `global javascript files/browser-accounts.js` | Browser-only sign-in, salted password hashes and per-profile local storage; server requests pass through in HTTP mode. |
+| `global javascript files/preferences.js` | Settings validation shared by browser and server stores. |
 | `server/auth.mjs` | Password hashing, session management and per-user budget storage. |
 | `server/server.mjs` | Local HTTP server, protected routes and Gemini proxy. |
 | `server/chat-policy.mjs` | Local quota-saving filter and trusted model scope rules. |
@@ -91,3 +91,7 @@ Run `node --test` for all **56 checks**. Run `node --test tests/goal-state.test.
 Theme, palette, chat position, Home-only visibility, sharing choice and the last 14 chat messages are saved per user in the active mode's storage. Browser-file profiles survive reload and sign-out in the same browser; server profiles also survive a server restart and sign-in from a fresh browser on that local server. **New Chat** clears saved chat history; **Reset profile** resets budget data but keeps settings. Older browser-only preferences are migrated once to an existing profile without making new users inherit them.
 
 Page links and sign-out wait for outstanding data/settings writes. Small writes use keepalive, and closing/reloading with unsaved work shows the browser's warning. Failed or stale saves show an error rather than overwriting another tab's newer data. Restart the Node server after installing this update so the preferences API is loaded.
+
+## Phone layout and interaction feedback
+
+On phones, swipe the navigation row to reach every page. Inputs use readable text, controls have larger tap areas, summaries stack and dialogs/chat fit the viewport. Buttons use subtle color/shadow feedback rather than hover underlines; keyboard focus remains visible. Page loading paints the current theme background immediately and begins server account loading earlier. See the QA report for the latest inspection.

@@ -46,6 +46,7 @@ main { animation:budget-simple-entry 120ms ease-out; }
   box-sizing: border-box;
 }
 html {
+  background: var(--background);
   scroll-behavior: smooth;
   scroll-padding-top: 24px;
 }
@@ -313,10 +314,16 @@ button,
 .button-link {
   display: inline-block;
 }
-button:hover,
-.button-link:hover {
-  filter: brightness(0.96);
+/* Button feedback uses theme colors without underlining or moving the layout. */
+button, .button-link { transition:background-color 120ms ease, box-shadow 120ms ease; }
+button:not(:disabled):hover, .button-link:hover,
+button:not(:disabled):focus-visible, .button-link:focus-visible {
+  text-decoration:none;
+  background-image:linear-gradient(135deg, #ffffff12, #0000000d);
+  box-shadow:0 3px 9px #00000012;
 }
+.button-link:focus-visible, button:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+@media(prefers-reduced-motion:reduce) { button, .button-link { transition:none; } }
 button:disabled {
   opacity: 0.5;
   cursor: default;
@@ -324,7 +331,7 @@ button:disabled {
 .text-button {
   color: var(--green);
   background: transparent;
-  padding: 5px 0;
+  padding: 6px 10px;
   text-align: left;
 }
 .secondary {
@@ -1168,8 +1175,6 @@ summary,
 }
 a[href]:not(.brand):not(.button-link):hover,
 a[href]:not(.brand):not(.button-link):focus-visible,
-button.text-button:not(:disabled):hover,
-button.text-button:not(:disabled):focus-visible,
 summary:hover,
 summary:focus-visible {
   text-decoration: underline;
@@ -1218,4 +1223,39 @@ input[type="color"] { min-height:44px; }
   .summary { gap:8px; }
   .summary > div { padding:14px 10px; }
   .summary strong { font-size:17px; }
+}
+/* Phone layouts prioritize readable fields, reachable controls and a compact scrolling navigation row. */
+@media(max-width:760px) {
+  header { padding:16px 16px 10px; gap:12px; }
+  nav { display:flex; flex-direction:row; gap:8px; overflow-x:auto; padding:3px 2px 8px; scroll-padding:8px; scrollbar-width:thin; -webkit-overflow-scrolling:touch; }
+  nav a { flex:0 0 auto; min-height:46px; padding:8px 12px; font-size:13px; gap:8px; white-space:nowrap; }
+  nav .nav-selection-highlight { display:none; }
+  nav.has-sliding-highlight a[aria-current="page"] { background:var(--panel); border-color:var(--input-border); }
+  main { padding:20px 16px calc(94px + env(safe-area-inset-bottom)); }
+  .page-title { align-items:flex-start; }
+  .page-actions { justify-content:flex-start; gap:8px; }
+  .page-actions button, .page-actions select { min-height:44px; }
+  button, .button-link, summary { min-height:44px; }
+  button, .button-link { font-size:14px; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size:16px; min-height:46px; }
+  label { font-size:14px; gap:8px; }
+  .panel { padding:20px; border-radius:18px; }
+  .section-title { gap:12px; }
+  .transaction-actions { gap:8px; }
+  .transaction-actions button { min-width:64px; font-size:13px; }
+  dialog { width:calc(100% - 24px); max-height:calc(100dvh - 24px); padding:22px 18px; }
+  dialog .button-row > button { flex:1; }
+  .payment-list strong { overflow-wrap:anywhere; }
+}
+@media(max-width:480px) {
+  .summary { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .summary > div:last-child:nth-child(odd) { grid-column:1/-1; }
+  .summary strong { font-size:22px; }
+  .summary span { font-size:12px; }
+  .form-grid { grid-template-columns:1fr; }
+}
+/* Touch devices also need readable controls when rotated wider than the phone breakpoint. */
+@media(pointer:coarse) {
+  button, .button-link, summary { min-height:44px; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size:16px; min-height:46px; }
 }

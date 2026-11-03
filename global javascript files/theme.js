@@ -14,7 +14,23 @@ try {
   const savedPalette = localStorage.getItem(paletteKey);
   if (palettes.includes(savedPalette)) currentPalette = savedPalette;
 } catch { /* The selected palette still works for this page. */ }
+// Cache only visual preferences for this tab; budgets and identity still load from the active account store.
+const themePreviewKey='budgetron-theme-preview-v1';
+function rememberThemePreview(){
+  try{sessionStorage.setItem(themePreviewKey,JSON.stringify({theme:currentTheme,palette:currentPalette}));}catch{ /* Theme controls still work without this optional preview. */ }
+}
+try{
+  const preview=JSON.parse(sessionStorage.getItem(themePreviewKey)||'null');
+  if(preview&&['light','dark'].includes(preview.theme)&&palettes.includes(preview.palette)){
+    currentTheme=preview.theme;currentPalette=preview.palette;
+    document.documentElement.dataset.theme=currentTheme;
+  }
+}catch{ /* Ignore unavailable or invalid preview storage. */ }
 document.documentElement.dataset.palette = currentPalette;
+// Begin the authenticated read while the browser parses the page and loads the deferred UI scripts.
+if(location.protocol!=='file:'&&document.documentElement.dataset.session==='loading'){
+  window.BudgetronSessionRequest=fetch('/api/session',{cache:'no-store'}).catch(()=>null);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = document.getElementById('theme-toggle');
@@ -29,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPalette = palettePicker.value;
     window.BudgetronSession?.savePreferences({palette:currentPalette});
     document.documentElement.dataset.palette = currentPalette;
+    rememberThemePreview();
     try { if(!window.BudgetronSession?.ready)localStorage.setItem(paletteKey, currentPalette); }
     catch { /* Palette changes remain usable for this page. */ }
   });
@@ -37,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.BudgetronSession?.savePreferences({theme:currentTheme});
     document.documentElement.dataset.theme = currentTheme;
     updateToggle();
+    rememberThemePreview();
     try { if(!window.BudgetronSession?.ready)localStorage.setItem(themeKey, currentTheme); }
     catch { /* Theme changes remain usable for this page. */ }
   });
@@ -49,6 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const links = [...(navigation?.querySelectorAll('a') || [])];
   const selectedLink = navigation?.querySelector('[aria-current="page"]');
   if (!navigation || !selectedLink) return;
+  // Reveal the selected link in the phone's horizontal navigation without delaying page changes.
+  if(matchMedia('(max-width:760px)').matches)selectedLink.scrollIntoView({block:'nearest',inline:'nearest'});
   const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
   const highlight = document.createElement('span');
   highlight.className = 'nav-selection-highlight'; highlight.setAttribute('aria-hidden','true');
@@ -92,6 +112,7 @@ window.addEventListener('budgetron:preferences',event=>{
   currentTheme=preferences.theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):preferences.theme;
   currentPalette=preferences.palette;
   document.documentElement.dataset.theme=currentTheme;document.documentElement.dataset.palette=currentPalette;
+  rememberThemePreview();
   const toggle=document.getElementById('theme-toggle'),picker=document.getElementById('color-theme');
   if(toggle){toggle.setAttribute('aria-pressed',String(currentTheme==='dark'));toggle.title=currentTheme==='dark'?'Switch to Light Mode':'Switch to Dark Mode';}
   if(picker)picker.value=currentPalette;

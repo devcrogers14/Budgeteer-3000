@@ -5,7 +5,7 @@ import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createAuthStore,hashPassword,verifyPassword,DEMO_USER} from '../server/auth.mjs';
-import BudgetMath from '../javascript files/budget-core.js';
+import BudgetMath from '../global javascript files/budget-core.js';
 const credentials={name:'Test User',email:'test@example.com',password:'Password123!'};
 test('password hashes use unique salts and verify only the matching password',()=>{const first=hashPassword('Password123!'),second=hashPassword('Password123!');assert.notEqual(first.salt,second.salt);assert.notEqual(first.hash,second.hash);assert.equal(verifyPassword('Password123!',first),true);assert.equal(verifyPassword('Wrong',first),false);});
 test('presentation user has dummy income, expenses and goals',()=>{const store=createAuthStore(),login=store.signin(DEMO_USER),user=store.current(login.cookie);assert.equal(user.isDemo,true);assert.equal(BudgetMath.totalIncome(user.budget),300000);assert.equal(BudgetMath.totalExpenses(user.budget),149000);assert.equal(user.budget.goals.length,2);});

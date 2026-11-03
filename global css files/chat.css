@@ -87,3 +87,13 @@
 
 /* Keep the move control reachable when a large conversation overlaps its position. */
 .chat-launcher[aria-expanded="true"] { z-index:42; }
+/* Thumb-friendly chat controls and readable input avoid phone keyboard zoom. */
+@media(max-width:760px) {
+  .chat-launcher { bottom:max(16px,env(safe-area-inset-bottom)); min-height:48px; }
+  .chat-close, #chat-send { min-width:44px; min-height:44px; }
+  #chat-input { font-size:16px; }
+  .chat-header { padding:14px 14px 10px; }
+  .chat-toolbar { padding-left:14px; padding-right:14px; }
+  .chat-messages { padding:14px; }
+  .chat-toolbar .chat-new { min-height:44px; }
+}

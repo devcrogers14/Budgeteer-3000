@@ -2,7 +2,7 @@
 import {scryptSync,randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
 import {existsSync,readFileSync,mkdirSync,writeFileSync,renameSync} from 'node:fs';
 import {dirname} from 'node:path';
-import BudgetMath from '../javascript files/budget-core.js';
+import BudgetMath from '../global javascript files/budget-core.js';
 import {defaultPreferences,mergePreferences} from './preferences.mjs';
 export const DEMO_USER={email:'demo@budgetron.local',password:'BudgetronDemo3000!',name:'Jordan Demo'};
 export function hashPassword(password,salt=randomBytes(16).toString('hex')) {return {salt,hash:scryptSync(password,salt,64).toString('hex')};}
