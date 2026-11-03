@@ -19,10 +19,11 @@ getElement('goal-form')?.addEventListener('submit',event=>{
   event.preventDefault();
   const name=getElement('goal-input-name').value.trim();
   if(!name){getElement('goal-input-name').setCustomValidity('Enter a goal name.');getElement('goal-input-name').reportValidity();return;}
+  const draft=BudgetronDrafts.capture(getElement('goal-form'));
   const goal={name,target:readAmountInCents('goal-target'),dueDate:getElement('goal-date')?.value||'',progressSource:'net-income'};
   if(getElement('goal-dialog').dataset.mode==='add'||!budgetData.goal){
     goal.id=newId();budgetData.goals.push(goal);budgetData.goal=goal;budgetData.activeGoalId=goal.id;
   }else Object.assign(budgetData.goal,goal);
-  getElement('goal-dialog').close();save('Savings goal saved.');
+  getElement('goal-dialog').close();save('Savings goal saved.',draft);
 });
 getElement('goal-input-name')?.addEventListener('input',()=>getElement('goal-input-name').setCustomValidity(''));

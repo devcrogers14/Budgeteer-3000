@@ -40,3 +40,12 @@
 @media(max-width:380px) {
 .donut-center strong { font-size:19px; }
 }
+
+/* Equal panels and fixed-ratio drawing areas keep both breakdowns aligned as details change. */
+.breakdown-grid { align-items:stretch; }
+.breakdown-panel { display:flex; flex-direction:column; }
+.breakdown-panel h2 { min-height:32px; }
+.breakdown-chart { width:min(100%,380px); aspect-ratio:11/10; margin:8px auto 12px; flex-shrink:0; }
+.breakdown-chart .overview-donut { width:100%; height:100%; }
+.breakdown-panel .chart-categories { width:100%; min-height:96px; align-content:start; }
+.breakdown-panel .payment-list { flex:1; margin-top:20px; }

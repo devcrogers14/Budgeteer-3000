@@ -4,9 +4,18 @@ function renderGoalsPage(){
   renderGoalSummary();
   getElement('goal-list').replaceChildren(...budgetData.goals.map(goal=>{
     const item=document.createElement('li');
-    const button=document.createElement('button');button.type='button';button.textContent=goal.name;
+    const button=document.createElement('button');button.type='button';
+    // This is the same shared net-income progress used by the main goal summary.
+    const progress=BudgetMath.goalProgress(budgetData,goal);
+    const heading=document.createElement('span');heading.className='goal-card-heading';
+    const name=document.createElement('span');name.className='goal-card-name';name.textContent=goal.name;
+    const percentage=document.createElement('span');percentage.className='goal-card-percent';percentage.textContent=Math.round(progress.percent)+'%';
+    heading.append(name,percentage);button.append(heading);
     button.setAttribute('aria-pressed',String(goal.id===budgetData.activeGoalId));
-    const detail=document.createElement('small');detail.textContent=`${formatMoney(goalSavings(goal))} of ${formatMoney(goal.target)}`;button.append(detail);
+    const detail=document.createElement('small');detail.textContent=`${formatMoney(progress.amount)} of ${formatMoney(goal.target)}`;button.append(detail);
+    if(goal.dueDate){const deadline=document.createElement('small');deadline.textContent='Complete by '+new Date(goal.dueDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',year:'numeric'});button.append(deadline);}
+    const track=document.createElement('span');track.className='goal-card-track';track.setAttribute('aria-hidden','true');
+    const fill=document.createElement('span');fill.className='goal-card-fill';fill.style.width=progress.percent+'%';track.append(fill);button.append(track);
     button.addEventListener('click',()=>{budgetData.goal=goal;budgetData.activeGoalId=goal.id;save('Goal selected.');});
     item.append(button);return item;
   }));
@@ -24,7 +33,7 @@ function renderGoalsPage(){
   deleteGoalButton.setAttribute('aria-label',`Delete goal: ${goal.name}`);
   const savings=goalSavings(goal);
   getElement('goal-deadline').textContent=goal.dueDate?`Complete by ${goal.dueDate}`:'Set a date when you are ready.';
-  getElement('goal-source').textContent='Tracking total income remaining after recorded expenses. Planned expenses are excluded.';
+  getElement('goal-source').textContent='Tracking all-time income remaining after recorded expenses. Planned expenses are excluded.';
   const goalPercentage=Math.min(savings/goal.target*100,100);
   getElement('goal-ring').style.background=`conic-gradient(var(--chart-2) ${goalPercentage}%,var(--subtle) 0)`;
   getElement('goal-ring').setAttribute('aria-label',`${Math.round(goalPercentage)} percent of ${goal.name} saved`);

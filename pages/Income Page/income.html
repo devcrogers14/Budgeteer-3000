@@ -173,7 +173,7 @@
         </div>
         <div>
           <span>
-            Income remaining after expenses
+            Income remaining · all time
           </span>
           <strong id="ledger-net">
           </strong>
@@ -210,9 +210,9 @@
               <select id="ledger-category" required>
               </select>
             </label>
-            <button type="submit">
-              Add income
-            </button>
+            <div class="form-actions">
+              <button type="submit">Add Income</button>
+            </div>
           </form>
         </article>
         <article class="panel">
@@ -231,9 +231,9 @@
               Chart color
               <input id="category-color" type="color" value="#507a63">
             </label>
-            <button type="submit">
-              Create category
-            </button>
+            <div class="form-actions">
+              <button type="submit" class="secondary">Create Category</button>
+            </div>
           </form>
           <p id="category-status" role="status">
           </p>
@@ -241,7 +241,7 @@
       </div>
       <article class="panel">
         <h2>
-          Income History
+          Income History · All Time
         </h2>
         <ul id="ledger-list" class="payment-list">
         </ul>

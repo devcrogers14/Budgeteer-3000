@@ -2,7 +2,7 @@
 let signedInUser=null,budgetRevision=0;
 let budgetSaveQueue=Promise.resolve(),preferenceSaveQueue=Promise.resolve();
 let pendingBudgetSaves=0,pendingPreferenceSaves=0,lastSaveError=null,isSigningOut=false;
-function showSaveError(error){lastSaveError=error;const status=getElement('status');if(status)status.textContent=error.message+' Refresh to reload saved data before making more changes.';}
+function showSaveError(error){lastSaveError=error;showFeedback(error.message+' Refresh to reload saved data before making more changes.',{error:true});}
 window.BudgetronSession={
   ready:false,preferences:null,
   get pending(){return pendingBudgetSaves+pendingPreferenceSaves;},
@@ -51,7 +51,7 @@ function initialPreferences(userId){
     const preferences=result.preferences||initialPreferences(signedInUser.id);window.BudgetronSession.preferences=preferences;
     window.dispatchEvent(new CustomEvent('budgetron:preferences',{detail:preferences}));
     if(!result.preferences){await window.BudgetronSession.savePreferences(preferences);try{localStorage.setItem('budgetron-legacy-settings-owner',signedInUser.id);}catch{}}
-    render();document.documentElement.dataset.session='ready';
+    render();BudgetronDrafts.start(signedInUser.id);document.documentElement.dataset.session='ready';
     const profile=document.querySelector('.sidebar-bottom');profile.replaceChildren();const name=document.createElement('strong');name.textContent=signedInUser.name;profile.append(name);
     const signout=document.createElement('button');signout.className='secondary';signout.textContent='Sign out';signout.type='button';document.querySelector('.page-actions').append(signout);
     signout.addEventListener('click',async()=>{
@@ -59,7 +59,7 @@ function initialPreferences(userId){
         await Promise.allSettled([budgetSaveQueue,preferenceSaveQueue]);
         if(lastSaveError&&!confirm('Some changes could not be saved. Sign out anyway?'))return;
         const response=await BudgetronAccounts.request('/api/signout',{method:'POST'});if(!response.ok)throw new Error('Could not sign out. Please try again.');
-        isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');sessionStorage.removeItem(themePreviewKey);location.replace(BudgetronAccounts.pageURL('pages/Sign In Page/auth.html'));
+        BudgetronDrafts.clearAll();isSigningOut=true;sessionStorage.removeItem('budgetron-chat-history-v1');sessionStorage.removeItem(themePreviewKey);location.replace(BudgetronAccounts.pageURL('pages/Sign In Page/auth.html'));
       }catch(error){getElement('status').textContent=error.message;}
     });
   }catch(error){document.documentElement.dataset.session='ready';showSaveError(error);}

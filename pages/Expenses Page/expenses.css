@@ -1,4 +1,6 @@
-/* Shared layout and colors come from global css files/styles.css. */
-
-/* Separate the submit action from the final category field. */
-#ledger-form > button[type="submit"], #category-form > button[type="submit"] { margin-top:8px; }
+/* Expense forms have consistent field spacing and a distinct submit footer. */
+#ledger-form, #category-form { display:grid; gap:14px; margin-top:20px; }
+.form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:8px; padding-top:16px; border-top:1px solid var(--line); }
+.form-actions > button { min-height:44px; min-width:144px; }
+#category-status:empty { display:none; }
+@media(max-width:760px) { .form-actions > button { width:100%; } }

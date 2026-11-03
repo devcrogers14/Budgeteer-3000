@@ -20,3 +20,17 @@
 .goal-add { border-radius:14px; }
 
 .goal-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px 14px; }
+/* Compact goal cards borrow the mockup's progress tracks while using the existing net-income calculation. */
+.goal-list { max-height:420px; padding:2px; }
+.goal-list button { border-radius:16px; padding:16px; background:var(--panel); transition:background-color 150ms ease,border-color 150ms ease,box-shadow 150ms ease; }
+.goal-list button[aria-pressed="true"] { background:var(--subtle); box-shadow:0 3px 12px #00000006; }
+.goal-list button:hover { background:var(--subtle); }
+.goal-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; font-weight:600; }
+.goal-card-name { min-width:0; overflow-wrap:anywhere; }
+.goal-card-percent { flex-shrink:0; color:var(--green); font-size:12px; }
+.goal-list small { margin-top:5px; line-height:1.5; }
+.goal-card-track { display:block; height:5px; margin-top:12px; border-radius:999px; background:var(--line); overflow:hidden; }
+.goal-card-fill { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--chart-1),var(--chart-2)); }
+.goal-ring { box-shadow:0 12px 28px #00000008; }
+@media(max-width:760px) { .goal-list { max-height:none; } }
+@media(prefers-reduced-motion:reduce) { .goal-list button { transition:none; } }

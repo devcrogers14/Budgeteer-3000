@@ -1,4 +1,14 @@
 // Apply a browser fallback before paint; authenticated profile preferences then restore the correct user settings.
+// Carry an expanded rail only to the page just clicked, so a new document does not replay its opening motion.
+const navigationCarryKey='budgetron-navigation-carry-v1';
+try{
+  const carry=JSON.parse(sessionStorage.getItem(navigationCarryKey)||'null');
+  sessionStorage.removeItem(navigationCarryKey);
+  if(carry&&carry.target===location.href&&Date.now()-carry.time<10000&&matchMedia('(min-width:1001px) and (hover:hover) and (pointer:fine)').matches){
+    document.documentElement.dataset.navigationOpen='';
+    document.documentElement.dataset.navigationRestoring='';
+  }
+}catch{ /* Navigation still works if the optional visual carry cannot be stored. */ }
 // Apply the theme before the page appears, then connect the header toggle.
 const themeKey = 'insert-name-theme';
 let currentTheme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -67,6 +77,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const links = [...(navigation?.querySelectorAll('a') || [])];
   const selectedLink = navigation?.querySelector('[aria-current="page"]');
   if (!navigation || !selectedLink) return;
+  const sidebar=navigation.closest('header');
+  const compactNavigation=matchMedia('(min-width:1001px) and (hover:hover) and (pointer:fine)');
+  // Release carried state on a real pointer departure; keyboard focus keeps its ordinary accessible behavior.
+  function releaseNavigationCarry(){
+    delete document.documentElement.dataset.navigationOpen;
+    try{sessionStorage.removeItem(navigationCarryKey);}catch{ /* The current page can still close its rail. */ }
+  }
+  sidebar.addEventListener('pointerleave',releaseNavigationCarry);
+  document.addEventListener('pointermove',event=>{
+    if(!document.documentElement.hasAttribute('data-navigation-open'))return;
+    const bounds=sidebar.getBoundingClientRect();
+    if(event.clientX<bounds.left||event.clientX>=bounds.right||event.clientY<bounds.top||event.clientY>=bounds.bottom)releaseNavigationCarry();
+  },{passive:true});
+  sidebar.addEventListener('focusout',event=>{
+    if(!sidebar.contains(event.relatedTarget)&&!sidebar.matches(':hover'))releaseNavigationCarry();
+  });
+  compactNavigation.addEventListener('change',releaseNavigationCarry);
+  sidebar.addEventListener('click',event=>{
+    const link=event.target.closest('a[href]');
+    if(!link||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||link.target||link.hasAttribute('download')||!compactNavigation.matches)return;
+    try{sessionStorage.setItem(navigationCarryKey,JSON.stringify({target:link.href,time:Date.now()}));}catch{ /* Immediate page navigation never depends on this preview. */ }
+  });
+  // Paint the restored width once before re-enabling normal hover transitions.
+  if(document.documentElement.hasAttribute('data-navigation-restoring')){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>delete document.documentElement.dataset.navigationRestoring));
+  }
   // Reveal the selected link in the phone's horizontal navigation without delaying page changes.
   if(matchMedia('(max-width:760px)').matches)selectedLink.scrollIntoView({block:'nearest',inline:'nearest'});
   const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');

@@ -95,3 +95,7 @@ Page links and sign-out wait for outstanding data/settings writes. Small writes 
 ## Phone layout and interaction feedback
 
 On phones, swipe the navigation row to reach every page. Inputs use readable text, controls have larger tap areas, summaries stack and dialogs/chat fit the viewport. Buttons use subtle color/shadow feedback rather than hover underlines; keyboard focus remains visible. Page loading paints the current theme background immediately and begins server account loading earlier. See the QA report for the latest inspection.
+
+On desktop with a mouse, the page navigation rests as compact icon circles and expands into labeled pills on hover or keyboard focus. Touch devices keep labeled navigation. Goal cards include percentages and progress tracks. These Figma-inspired details respect reduced motion and do not add a navigation delay.
+
+Unfinished forms stay in the current tab as account-scoped drafts when navigating between pages. They clear after successful saving, cancellation, profile reset or sign-out. Saving a previous entry does not erase a newer draft. Save feedback remains visible without scrolling, calendar entries start on the selected day, and a new category is selected automatically. Totals distinguish monthly and all-time amounts.

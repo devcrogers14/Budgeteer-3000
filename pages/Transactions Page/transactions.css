@@ -3,3 +3,11 @@
 @media (max-width:760px) {
 .spending-layout { grid-template-columns:1fr; gap:0; }
 }
+
+/* Keep the two entry shortcuts together as one toolbar beside the history heading. */
+.transaction-entry-actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.transaction-entry-actions .button-link { display:inline-flex; align-items:center; justify-content:center; min-height:44px; }
+@media(max-width:760px) {
+  .transaction-entry-actions { width:100%; }
+  .transaction-entry-actions .button-link { flex:1; }
+}

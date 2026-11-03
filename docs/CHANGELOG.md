@@ -2,6 +2,23 @@
 
 Labels describe saved snapshots; F/W prototype labels are not original release numbers. Older code/ZIP files are preserved, with notes beside each school archive.
 
+## Everyday usability improvements — November 2, 2026
+
+- Show Saving/success/error feedback in the existing live region as a visible, non-blocking message on desktop and phones.
+- Keep unfinished income, expense, category, calendar, goal and transaction-edit forms in account/page/context-scoped session-storage drafts. Clear completed drafts only after a successful save; preserve a newer draft even if its fields match the entry just submitted. Clear drafts on Cancel/Escape, profile reset and sign-out.
+- Default a new calendar entry to the explicitly selected day. Restore unfinished payment fields when returning to the page.
+- Select a category immediately after creating it.
+- Label all-time ledger/transaction/goal figures separately from monthly summaries. Transaction search was intentionally not added.
+- Pass all 56 automated tests plus browser-file/server usability checks and delayed-save/failed-save/account-isolation checks using disposable profiles.
+
+## Figma-inspired navigation and goals — November 2, 2026
+
+- Use the open Budgetron Figma Make mockup as a visual reference: warmer Cream surfaces, rounded panels, softer shadows and green progress accents.
+- Desktop mouse navigation rests as 52px icon circles and expands into labeled pills on hover or keyboard focus. The rail overlays the content so the page does not resize while hovering. Tablet/touch navigation keeps visible labels.
+- Add goal-card percentages, optional deadline labels and small progress tracks using the same existing net-income calculation.
+- Add brief dialog feedback and modest summary-card lift; honor reduced motion and keep navigation immediate.
+- Verify all seven pages at desktop/tablet/phone widths, every light/dark palette, keyboard navigation, goal selection/add/delete, reduced motion and the broader browser flows. All 56 automated tests pass; no live AI calls.
+
 ## UI polish, mobile layout and shared folders — November 2, 2026
 
 - Use subtle gradient/shadow feedback for buttons, retain keyboard outlines, and keep underlines for ordinary text links.
@@ -73,3 +90,11 @@ Commit `b6049b6`, FInalized transitions and page animations.
 - **F2:** expanded Pocket Budget with separate UI/model, recurring bills, multiple goals/accounts, allocations and simulated transfers. Its browser preview ZIP is a package of the same prototype, not another version.
 
 The previous CS100 Current Budgetron folder/ZIP is archived before publishing this working snapshot. Its own notes identify which earlier features it contains. Design and research materials remain separate from runnable app versions.
+
+### Navigation continuity fix — November 2, 2026
+
+Restore the open rail before the next page paints after a navigation click, preventing the collapse/reopen bounce. Release the temporary state on pointer departure or a change to the mobile layout.
+
+### Entry actions and chart alignment — November 2, 2026
+
+Group the Transactions add-entry shortcuts, move income/expense/category submit controls into separated form footers, and give both breakdown panels a shared drawing-area size and equal desktop height. Verify successful entry/category creation, shortcuts, spacing and matching charts at 1440/390/320px. All 56 tests pass.

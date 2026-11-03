@@ -1259,3 +1259,85 @@ input[type="color"] { min-height:44px; }
   button, .button-link, summary { min-height:44px; }
   input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size:16px; min-height:46px; }
 }
+/* Reference-inspired surfaces: warm cream, rounded panels and restrained depth in every palette. */
+:root[data-theme='light'][data-palette='cream'] {
+  --background:#f4efd9;
+  --panel:#fffdf6;
+  --line:#e5deca;
+  --heading:#5f4b39;
+  --shadow:0 10px 30px #6c57300a;
+}
+.panel { border-radius:22px; box-shadow:var(--shadow); }
+.summary > div { border-radius:20px; }
+button, .button-link { border-radius:14px; }
+nav a, .nav-selection-highlight { border-radius:999px; }
+/* Desktop navigation expands over the content, keeping charts and forms in the same position. */
+@media(min-width:1001px) and (hover:hover) and (pointer:fine) {
+  body:has(> header) { grid-template-columns:88px minmax(0,1fr); }
+  body > header {
+    width:88px;
+    padding:24px 16px;
+    gap:24px;
+    z-index:20;
+    overflow-x:hidden;
+    overflow-y:auto;
+    border-right:1px solid var(--line);
+    border-radius:0 24px 24px 0;
+    background:var(--background);
+    transition:width 200ms cubic-bezier(.2,.8,.2,1), box-shadow 200ms ease;
+  }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) {
+    width:248px;
+    background:var(--panel);
+    box-shadow:12px 0 32px #0000000d;
+  }
+  body > header .brand { padding:0; min-height:58px; }
+  body > header .brand .wordmark { font-size:0; gap:0; justify-content:center; }
+  body > header .wordmark svg { width:26px; height:26px; }
+  body > header .wordmark b, body > header .wordmark sup { display:none; }
+  body > header .brand-tagline { opacity:0; white-space:nowrap; }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) .brand .wordmark { font-size:22px; gap:5px; justify-content:flex-start; }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) .wordmark b,
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) .wordmark sup { display:inline; }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) .brand-tagline { opacity:1; }
+  body > header nav { gap:10px; }
+  body > header nav a { min-height:52px; padding:6px 11px; gap:0; overflow:hidden; white-space:nowrap; }
+  body > header nav .nav-icon { flex:0 0 32px; width:32px; height:32px; }
+  body > header nav a > span:last-child {
+    max-width:0;
+    opacity:0;
+    overflow:hidden;
+    transform:translateX(-6px);
+    transition:max-width 200ms ease, opacity 150ms ease, transform 200ms ease, margin-left 200ms ease;
+  }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) nav a > span:last-child { max-width:160px; opacity:1; margin-left:12px; transform:translateX(0); }
+  body > header .sidebar-bottom { opacity:0; white-space:nowrap; transition:opacity 150ms ease; }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) .sidebar-bottom { opacity:1; }
+}
+/* Short feedback feels responsive without adding a wait before page navigation. */
+@media(hover:hover) and (pointer:fine) {
+  .summary > div { transition:transform 160ms ease, box-shadow 160ms ease; }
+  .summary > div:hover { transform:translateY(-2px); box-shadow:0 9px 24px #0000000c; }
+}
+dialog[open] { animation:budget-dialog-appear 140ms ease-out; }
+@keyframes budget-dialog-appear { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+@media(prefers-reduced-motion:reduce) {
+  body > header, body > header *, .summary > div { transition:none !important; }
+  .summary > div:hover { transform:none; }
+  dialog[open] { animation:none; }
+}
+/* Keep the resting navigation targets circular rather than slightly oval. */
+@media(min-width:1001px) and (hover:hover) and (pointer:fine) {
+  body > header nav a { width:52px; transition:width 200ms cubic-bezier(.2,.8,.2,1),background-color 120ms ease,border-color 120ms ease; }
+  :is(body > header:hover, body > header:focus-within, :root[data-navigation-open] body > header) nav a { width:216px; }
+}
+@media(prefers-reduced-motion:reduce) { body > header nav a { transition:none; } }
+
+/* Restored navigation paints at its carried width, then normal hover motion resumes. */
+:root[data-navigation-restoring] body > header,
+:root[data-navigation-restoring] body > header * { transition:none !important; }
+/* One existing live region provides visible feedback without shifting the form or covering controls. */
+.save-feedback { position:fixed; z-index:50; left:50%; bottom:24px; transform:translateX(-50%); width:max-content; max-width:min(520px,calc(100vw - 32px)); margin:0; padding:12px 18px; border:1px solid var(--input-border); border-radius:14px; background:var(--panel); color:var(--ink); box-shadow:0 8px 30px #00000018; font-size:14px; line-height:1.5; pointer-events:none; overflow-wrap:anywhere; }
+.save-feedback:empty { display:none; }
+.save-feedback[data-error="true"] { border-color:var(--error); color:var(--error); }
+@media(max-width:760px) { .save-feedback { bottom:calc(84px + env(safe-area-inset-bottom)); } }

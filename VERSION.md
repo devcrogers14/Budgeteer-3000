@@ -19,3 +19,7 @@ The local working project, the CS100 Current Budgetron folder, and Current Budge
 See [docs/CHANGELOG.md](docs/CHANGELOG.md) for earlier versions and [docs/QA-REPORT.md](docs/QA-REPORT.md) for verification limits.
 
 Latest working changes: theme-matched loading background and earlier server session read; hover/focus polish; 8px submit spacing; phone navigation/fields/touch targets/dialogs; `global css files/`, `global javascript files/` and lowercase `pages/`.
+
+Reference-inspired working update: compact circle/pill desktop navigation, warm Cream surfaces, rounded cards, goal progress tracks and short optional motion. The existing 56 tests and focused desktop/tablet/mobile interaction review pass.
+
+Latest usability additions: visible save feedback, account-scoped tab drafts, selected calendar dates, automatic category selection and clear all-time labels. Transaction search remains excluded. All 56 tests and focused browser/error-recovery checks passed.

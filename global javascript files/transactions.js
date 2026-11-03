@@ -29,7 +29,8 @@ function openTransactionEditor(id) {
       <p class="small">Income increases available funds; expenses decrease them. Planned expenses are excluded from totals.</p>
       <div class="button-row"><button type="button" class="secondary" id="tx-cancel">Cancel</button><button type="submit">Save Changes</button></div></form>`;
     document.body.append(dialog);
-    getElement('tx-cancel').addEventListener('click', () => dialog.close());
+    getElement('tx-cancel').addEventListener('click',()=>{BudgetronDrafts.clear(getElement('transaction-edit-form'));dialog.close();});
+    dialog.addEventListener('cancel',()=>BudgetronDrafts.clear(getElement('transaction-edit-form')));
     getElement('tx-kind').addEventListener('change',()=>fillCategories(getElement('tx-category'),getElement('tx-kind').value));
     getElement('tx-name').addEventListener('input', () => getElement('tx-name').setCustomValidity(''));
     getElement('transaction-edit-form').addEventListener('submit', (event) => {
@@ -40,9 +41,10 @@ function openTransactionEditor(id) {
       if (!Number.isSafeInteger(amount) || amount <= 0) return;
       const current = budgetData.events.find((item) => item.id === dialog.dataset.transactionId);
       if (!current) { dialog.close(); return; }
+      const draft=BudgetronDrafts.capture(getElement('transaction-edit-form'));
       Object.assign(current, {name, amount, date:getElement('tx-date').value, kind:getElement('tx-kind').value, category:getElement('tx-category').value});
       window.BudgetronPage?.transactionChanged?.(current);
-      dialog.close(); save('Transaction updated. Calendar and spending totals updated.');
+      dialog.close(); save('Transaction updated. Calendar and spending totals updated.',draft);
     });
   }
   const record = budgetData.events.find((item) => item.id === id); if (!record) return;
@@ -50,6 +52,7 @@ function openTransactionEditor(id) {
   getElement('tx-name').setCustomValidity(''); getElement('tx-name').value = record.name;
   getElement('tx-amount').value = (record.amount/100).toFixed(2); getElement('tx-date').value = record.date;
   getElement('tx-kind').value = record.kind; fillCategories(getElement('tx-category'),record.kind,record.category);
+  BudgetronDrafts.restore(getElement('transaction-edit-form'),'edit:'+id);
   dialog.showModal();
 }
 
@@ -84,11 +87,19 @@ function initializeLedgerPage(type) {
   getElement('ledger-form').addEventListener('submit',event=>{
     event.preventDefault();const name=getElement('ledger-name').value.trim(),amount=readAmountInCents('ledger-amount');
     if(!name||!Number.isSafeInteger(amount)||amount<=0)return;
+    const draft=BudgetronDrafts.capture(getElement('ledger-form'));
     budgetData.events.push({id:newId(),name,amount,date:getElement('ledger-date').value,kind:getElement('ledger-kind').value,category:getElement('ledger-category').value});
-    getElement('ledger-name').value='';getElement('ledger-amount').value='';save(type==='income'?'Income added.':'Expense added.');
+    getElement('ledger-name').value='';getElement('ledger-amount').value='';save(type==='income'?'Income added.':'Expense added.',draft);
   });
   getElement('category-form').addEventListener('submit',event=>{
-    event.preventDefault();try{BudgetMath.addCategory(budgetData,getElement('category-name').value,type,getElement('category-color').value);getElement('category-name').value='';getElement('category-status').textContent='Category created.';save('Category saved.');}catch(error){getElement('category-status').textContent=error.message;}
+    event.preventDefault();try{
+      const categoryName=getElement('category-name').value.trim(),draft=BudgetronDrafts.capture(getElement('category-form'));
+      BudgetMath.addCategory(budgetData,categoryName,type,getElement('category-color').value);
+      getElement('category-name').value='';getElement('category-status').textContent='Category created.';
+      save('Category created and selected.',draft);
+      // The renderer fills options synchronously; select the newly created option for the next entry.
+      getElement('ledger-category').value=categoryName;BudgetronDrafts.remember(getElement('ledger-form'));
+    }catch(error){getElement('category-status').textContent=error.message;}
   });
   window.BudgetronPage={render:renderLedger};render();
 }

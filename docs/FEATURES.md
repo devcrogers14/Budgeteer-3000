@@ -57,3 +57,21 @@ Mobile navigation uses a swipeable row that reveals the selected page. Phone for
 Page loading immediately uses the theme background and a tab-local visual preview; the server session read starts while deferred scripts are loading. Profile content stays hidden until authenticated data is ready. Only visual settings are cached for this preview.
 
 Shared styles live in `global css files/`, shared scripts in `global javascript files/`, and page-specific trios in lowercase `pages/`.
+
+## Reference-inspired interactions
+
+Desktop mouse users see a compact rail of circular page icons. Hovering over it or moving keyboard focus into it reveals labeled navigation pills. Expanding the rail leaves the main content in place. Tablet and phone layouts retain visible labels. Reduced-motion settings remove the drawer and dialog animations.
+
+Cream uses a warmer background with softly rounded panels. Goal cards show their net-income percentage, a progress track, and an optional deadline; these are visual presentations of the existing goal calculation. A brief dialog reveal and subtle summary hover feedback add movement without delaying page changes.
+
+Desktop navigation carries its expanded visual state to the page just clicked. It stays open while the pointer remains over the rail and releases that state when the pointer leaves. Keyboard focus and mobile labels retain their existing behavior.
+
+## Form actions and matching breakdowns
+
+Income and Expenses use spaced field groups and separated action footers: Add Income/Add Expense is the primary action, while Create Category uses a secondary button. On phones these footer buttons fill the form width. Transactions groups its two entry shortcuts beside All Transactions. Income and Expense Breakdown panels use matching chart drawing areas and stretch to equal height when side by side.
+
+## Everyday usability
+
+Save confirmations and errors appear in a visible, non-blocking message. Unfinished forms are kept separately by user, page and add/edit context in the current browser tab. Completed drafts clear after a successful save; newer drafts are protected from a delayed prior save. Cancel/Escape, profile reset and sign-out clear the relevant drafts. Drafts are not passwords, do not sync between devices, and are not shared with AI.
+
+New calendar entries start on the selected day, newly created categories are automatically selected, and all-time totals are explicitly labeled alongside monthly figures. Transaction search is not included.

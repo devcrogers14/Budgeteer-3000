@@ -156,13 +156,14 @@
       <p class="notice">
         Your profile uses saved local data. No real banks or money transfers.
       </p>
-      <section class="two-column" aria-label="Income and expense charts">
-        <article class="panel">
+      <section class="two-column breakdown-grid" aria-label="Income and expense charts">
+        <article class="panel breakdown-panel">
           <h2>
             Income Breakdown
           </h2>
-          <svg class="overview-donut" id="income-donut" viewBox="0 0 440 400" role="group">
-          </svg>
+          <div class="breakdown-chart">
+            <svg class="overview-donut" id="income-donut" viewBox="0 0 440 400" role="group"></svg>
+          </div>
           <p id="income-chart-total">
           </p>
           <div id="income-chart-categories" class="chart-categories">
@@ -170,12 +171,13 @@
           <ul id="income-category-items" class="payment-list">
           </ul>
         </article>
-        <article class="panel">
+        <article class="panel breakdown-panel">
           <h2>
             Expense Breakdown
           </h2>
-          <svg class="overview-donut" id="expense-donut" viewBox="0 0 440 400" role="group">
-          </svg>
+          <div class="breakdown-chart">
+            <svg class="overview-donut" id="expense-donut" viewBox="0 0 440 400" role="group"></svg>
+          </div>
           <p id="expense-chart-total">
           </p>
           <div id="expense-chart-categories" class="chart-categories">

@@ -50,11 +50,12 @@ function renderCalendar() {
 getElement('payment-form')?.addEventListener('submit', (event) => {
   event.preventDefault(); const name = getElement('payment-name').value.trim();
   if (!name) { getElement('payment-name').setCustomValidity('Enter a description.'); getElement('payment-name').reportValidity(); return; }
+  const draft=BudgetronDrafts.capture(getElement('payment-form'));
   const date = getElement('payment-date').value;
   budgetData.events.push({ id: newId(), name, amount: readAmountInCents('payment-amount'), date, kind: getElement('payment-kind').value, category: getElement('payment-category').value });
   const [year, month] = date.split('-').map(Number); visibleMonth = new Date(year, month - 1, 1);
   selectedDate = null;
-  getElement('payment-dialog').close(); event.target.reset(); save('Added to the calendar.');
+  getElement('payment-dialog').close(); event.target.reset(); save('Added to the calendar.',draft);
 });
 getElement('payment-name')?.addEventListener('input', () => getElement('payment-name').setCustomValidity(''));
 getElement('previous-month')?.addEventListener('click', () => { visibleMonth.setMonth(visibleMonth.getMonth() - 1); selectedDate = null; renderCalendar(); });
@@ -64,6 +65,7 @@ getElement('calendar-all')?.addEventListener('click', () => { selectedDate = nul
 
 window.BudgetronPage = {
   render:renderCalendar,
+  entryDate(){return selectedDate;},
   reset() {visibleMonth = new Date(today.getFullYear(),today.getMonth(),1); selectedDate = null;},
   transactionChanged(record) {const [year,month]=record.date.split('-').map(Number); visibleMonth=new Date(year,month-1,1); selectedDate=null;}
 };

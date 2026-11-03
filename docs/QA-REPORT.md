@@ -1,5 +1,11 @@
 # Verification
 
+## Figma interaction review — November 2, 2026
+
+All 56 automated tests passed. A clean browser verified circle/pill navigation on hover and keyboard focus, collapse on leaving the rail, and unchanged main-content bounds during expansion. All seven pages fit 1440/1024/900/390/320px viewports, and mobile labels remain visible.
+
+Goal selection and progress tracks were checked in all four palettes in light and dark mode, with goal creation/deletion and capped percentages. Reduced-motion checks disabled drawer/dialog motion. File-mode navigation and sign-out produced no HTTP requests or JavaScript errors. Compact/expanded Home and desktop/mobile Goals screenshots were visually inspected. Existing financial rules and separate browser/server stores remain unchanged.
+
 ## UI/mobile inspection — November 2, 2026
 
 All 56 automated tests passed after the UI changes and folder renames. Browser inspection covered all seven app pages at desktop, 390px and 320px; no horizontal page overflow was found. Buttons were checked for hover and keyboard focus in all four palettes in both light/dark modes. Screenshots of Home, Goals, Expenses and Calendar were visually reviewed.
@@ -35,3 +41,15 @@ Result: **47 automated tests passed**, plus **11 whole-site browser scenarios** 
 The audit used Chromium/Brave automation and an isolated profile file under Codex Work. Mock Gemini responses checked the app's connection, refusal and error paths without using API quota. **Live Gemini availability/answers, public deployment, email verification and password recovery were not tested.** This remains a local classroom app.
 
 See [TESTING.md](TESTING.md) for the automated suite. Local and CS100 sharing copies are compared file-by-file using SHA-256 during export; the matching ZIP is checked against those same bytes. This verifies the published snapshot, not continuous future sync.
+
+### Navigation continuity follow-up
+
+Frame-by-frame browser checks covered all seven page switches in file and server modes. The rail stayed at its expanded width from the first sampled frame, collapsed when the pointer left, and retained keyboard-focus/mobile behavior. All 56 automated tests passed.
+
+### Form action and chart layout follow-up
+
+All 56 automated tests passed. Browser checks at 1440/390/320px verified separated submit footers, successful income/expense and category creation, both transaction shortcuts, equal chart drawing-area dimensions before/after category selection, equal panel heights when side by side, and no horizontal page overflow. Desktop and mobile screenshots were visually reviewed. Tests used disposable browser profiles.
+
+### Everyday usability follow-up
+
+All 56 automated tests passed. Clean browser checks in file and server modes verified per-page form drafts, successful-save cleanup, selected categories, visible mobile confirmation, selected calendar dates, goal/payment/edit draft restoration, Cancel cleanup, all-time labels and sign-out cleanup. Additional checks verified that delayed saves preserve even an identical newer draft, failed saves preserve the submitted draft after refresh, and another account cannot inherit it. No live AI calls or real profile data were used.
