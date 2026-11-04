@@ -53,7 +53,7 @@ function initialPreferences(userId){
     if(!result.preferences){await window.BudgetronSession.savePreferences(preferences);try{localStorage.setItem('budgetron-legacy-settings-owner',signedInUser.id);}catch{}}
     render();BudgetronDrafts.start(signedInUser.id);document.documentElement.dataset.session='ready';
     const profile=document.querySelector('.sidebar-bottom');profile.replaceChildren();const name=document.createElement('strong');name.textContent=signedInUser.name;profile.append(name);
-    const signout=document.createElement('button');signout.className='secondary';signout.textContent='Sign out';signout.type='button';document.querySelector('.page-actions').append(signout);
+    const signout=document.createElement('button');signout.className='secondary';signout.textContent='Sign Out';signout.type='button';document.querySelector('.page-actions').append(signout);
     signout.addEventListener('click',async()=>{
       try{
         await Promise.allSettled([budgetSaveQueue,preferenceSaveQueue]);

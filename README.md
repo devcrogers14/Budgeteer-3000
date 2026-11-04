@@ -20,7 +20,7 @@ On the sign-in page, **Use demo credentials** fills the form; click **Sign in**.
 
 ## Features
 
-Navigation is **Home, Goals, Income, Expenses, Pie Chart, Transactions, Calendar**. Accounts has been replaced by Income and Expenses. Income/Expenses support adding, editing and deleting entries and creating custom categories. Planned expenses do not count toward totals. Goals follow total recorded income minus recorded expenses, clamped to zero. Goals share that available amount and do not reserve money. Home includes a **View Goals** link. Charts show income and expenses separately; Transactions shows the full history across dates.
+Navigation is **Home, Goals, Pie Chart, Transactions, Calendar**. Pie Chart combines monthly income/expense summaries, interactive charts, and both all-time entry histories. **Add Deposit**, **Add Expense**, and **Create Category** open separate dialogs; deposits include salary and other money received. Old Income/Expenses bookmarks forward to the matching history. Recorded-entry counters have been removed. Entries still support editing and deletion. Raleway is bundled locally for offline use. Planned expenses do not count toward totals. Goals follow total recorded income minus recorded expenses, clamped to zero. Goals share that available amount and do not reserve money. Home includes a **View Goals** link. Charts show income and expenses separately; Transactions shows the full history across dates.
 
 See [FEATURES.md](docs/FEATURES.md) for details. The calendar remains available alongside the income/expense ledgers.
 

@@ -3,13 +3,13 @@
 function renderGoalSummary() {
   const goal=budgetData.goal;
   const savings=goalSavings(goal);
-  getElement('goal-name').textContent=goal?goal.name:'No savings goals yet';
+  getElement('goal-name').textContent=goal?titleCaseLabel(goal.name):'No savings goals yet';
   getElement('goal-progress').textContent=goal?`${formatMoney(savings)} saved of ${formatMoney(goal.target)}`:'Add a goal to start tracking your savings.';
   getElement('goal-bar').hidden=!goal;
   getElement('goal-bar').value=goal?Math.min(savings/goal.target*100,100):0;
   getElement('goal-remaining').textContent=goal?(savings>=goal.target?'Goal reached!':`${formatMoney(goal.target-savings)} to go`):'';
   document.querySelectorAll('[data-goal-action="edit"]').forEach(button=>{
-    button.textContent=goal?'Edit goal':'+ Add goal';
+    button.textContent=goal?'Edit Goal':'+ Add Goal';
     button.dataset.goalMode=goal?'edit':'add';
   });
 

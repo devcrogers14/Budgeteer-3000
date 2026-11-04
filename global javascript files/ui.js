@@ -88,7 +88,7 @@ const BudgetronDrafts=(()=>{
   }
   function clear(form){try{const key=keyFor(form);if(key)sessionStorage.removeItem(key);}catch{}}
   return {
-    start(userId){currentUserId=userId;for(const id of ['ledger-form','category-form'])restore(document.getElementById(id));},
+    start(userId){currentUserId=userId;for(const id of ['deposit-form','expense-form','category-form'])restore(document.getElementById(id));},
     restore,remember,capture:remember,clear,
     // A completed save must not erase a newer entry the user has already started typing.
     clearSaved(draft){if(!draft)return;try{if(sessionStorage.getItem(draft.key)===draft.value)sessionStorage.removeItem(draft.key);}catch{}},

@@ -8,7 +8,7 @@ function renderGoalsPage(){
     // This is the same shared net-income progress used by the main goal summary.
     const progress=BudgetMath.goalProgress(budgetData,goal);
     const heading=document.createElement('span');heading.className='goal-card-heading';
-    const name=document.createElement('span');name.className='goal-card-name';name.textContent=goal.name;
+    const name=document.createElement('span');name.className='goal-card-name';name.textContent=titleCaseLabel(goal.name);
     const percentage=document.createElement('span');percentage.className='goal-card-percent';percentage.textContent=Math.round(progress.percent)+'%';
     heading.append(name,percentage);button.append(heading);
     button.setAttribute('aria-pressed',String(goal.id===budgetData.activeGoalId));

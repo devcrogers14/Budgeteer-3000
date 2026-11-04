@@ -10,7 +10,7 @@
 #auth-form label { margin:0; gap:8px; }
 #auth-form input { min-height:46px; margin:0; }
 #auth-submit { width:100%; min-height:46px; margin-top:6px; }
-#auth-status { margin:14px 0 0; font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+#auth-status { margin:14px 0 0; font-size:15px; line-height:1.6; overflow-wrap:anywhere; }
 #auth-status:empty { display:none; }
 #auth-switch { display:block; width:100%; min-height:44px; margin-top:20px; padding:14px 4px 0; border-top:1px solid var(--line); border-radius:0; line-height:1.5; text-align:center; }
 #fill-demo { width:100%; min-height:44px; margin-top:20px; }
