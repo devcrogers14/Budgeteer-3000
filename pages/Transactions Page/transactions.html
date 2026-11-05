@@ -72,22 +72,7 @@
             Goals
           </span>
         </a>
-        <a href="../Income Page/income.html">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg>
-          </span>
-          <span>
-            Income
-          </span>
-        </a>
-        <a href="../Expenses Page/expenses.html">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v5h14v-5"/></svg>
-          </span>
-          <span>
-            Expenses
-          </span>
-        </a>
+
         <a href="../Pie Chart Page/spending-chart.html">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3a8 8 0 0 1 6 6h-6z"/></svg>
@@ -185,15 +170,15 @@
             All Transactions
           </h2>
           <div class="transaction-entry-actions" role="group" aria-label="Add a transaction">
-            <a class="button-link secondary" href="../Income Page/income.html">Add Income</a>
-            <a class="button-link" href="../Expenses Page/expenses.html">Add Expense</a>
+            <a class="button-link secondary" href="../Pie Chart Page/spending-chart.html?entry=deposit">Add Deposit</a>
+            <a class="button-link" href="../Pie Chart Page/spending-chart.html?entry=expense">Add Expense</a>
           </div>
         </div>
         <label>
           Show
           <select id="transaction-filter">
             <option value="all">
-              All entries
+              All Entries
             </option>
             <option value="income">
               Income
@@ -202,7 +187,7 @@
               Expenses
             </option>
             <option value="planned">
-              Planned expenses
+              Planned Expenses
             </option>
           </select>
         </label>
@@ -214,7 +199,7 @@
       </article>
       <footer>
         <button id="reset-demo" type="button" class="text-button">
-          Reset profile
+          Reset Profile
         </button>
       </footer>
       <p id="status" role="status" class="status">

@@ -97,3 +97,17 @@ test('every reorganized app page still requires sign-in',async testContext=>{
     if(slug!=='auth')assert.equal(response.headers.get('location'),'/pages/Sign In Page/auth.html');
   }
 });
+
+// Resolve the font from its stylesheet so offline-relative paths and the HTTP allowlist stay in sync.
+test('bundled Raleway font loads through the shared stylesheet URL',async testContext=>{
+  const {request}=await setup(testContext);
+  const cssPath='/global%20css%20files/styles.css';
+  const css=await(await request(cssPath)).text();
+  const fontPath=css.match(/src:url\('([^']+Raleway\.ttf)'\)/)[1];
+  const fontURL=new URL(fontPath,'http://test'+cssPath);
+  assert.equal(decodeURIComponent(fontURL.pathname),'/assets/fonts/Raleway.ttf');
+  const response=await request(fontURL.pathname);
+  assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'font/ttf');
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  assert.deepEqual([...bytes.slice(0,4)],[0,1,0,0]);assert.ok(bytes.length>10000);
+});

@@ -21,6 +21,8 @@ function removeGoal(id){if(!budgetData.goals.some(goal=>goal.id===id))return fal
 function currentMonthPurchases(){return budgetData.events.filter(event=>event.kind==='purchase'&&event.date.startsWith(currentMonth));}
 function spendingTotals(){return BudgetMath.categoryTotals(budgetData,'expense',currentMonth);}
 function goalSavings(goal){return BudgetMath.goalProgress(budgetData,goal).amount;}
-function typeLabel(kind){return kind==='income'?'Income':kind==='planned'?'Planned expense':'Expense';}
+function typeLabel(kind){return kind==='income'?'Income':kind==='planned'?'Planned Expense':'Expense';}
 function fillCategories(select,kind,selected){select.replaceChildren(...budgetData.categories.filter(category=>category.type===(kind==='income'?'income':'expense')).map(category=>new Option(category.name,category.name)));if(selected&&[...select.options].some(option=>option.value===selected))select.value=selected;}
 initializeGoals();
+
+function titleCaseLabel(value){return value.replace(/\b[a-z]/g,letter=>letter.toUpperCase());}

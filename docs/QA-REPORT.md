@@ -53,3 +53,12 @@ All 56 automated tests passed. Browser checks at 1440/390/320px verified separat
 ### Everyday usability follow-up
 
 All 56 automated tests passed. Clean browser checks in file and server modes verified per-page form drafts, successful-save cleanup, selected categories, visible mobile confirmation, selected calendar dates, goal/payment/edit draft restoration, Cancel cleanup, all-time labels and sign-out cleanup. Additional checks verified that delayed saves preserve even an identical newer draft, failed saves preserve the submitted draft after refresh, and another account cannot inherit it. No live AI calls or real profile data were used.
+
+
+## Combined Budget Workspace — November 3, 2026
+
+- Pie Chart now contains income/expense monthly summaries, remaining funds, both interactive charts and both all-time histories. The sidebar has five destinations; old Income/Expenses bookmarks forward to the relevant history.
+- Add Deposit, Add Expense and Create Category use labeled native modal dialogs. Deposits include salary and other received funds. Planned expenses remain excluded from recorded spending totals.
+- Raleway and its OFL license are bundled for offline use; the server explicitly serves the font as `font/ttf`. Shared and page-specific small text, buttons and navigation targets are larger.
+- Validation: all 57 Node unit/integration tests pass, including a new font URL/MIME/signature check. A separate jsdom check exercised empty state, navigation, deposit/expense entry, planned exclusion, summary totals, both histories, cancellation, custom categories, duplicate rejection, chart updates, editing, deletion and whitespace validation. It found and verified a fix for restoring an empty date after canceling and creating a category.
+- Browser access was disabled in this session. Real-browser screenshots, responsive visual inspection, native focus trapping and Escape behavior were not verified. The DOM check supplied showModal/close shims; it does not establish native dialog behavior.

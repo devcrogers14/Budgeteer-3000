@@ -72,22 +72,7 @@
             Goals
           </span>
         </a>
-        <a href="../Income Page/income.html">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg>
-          </span>
-          <span>
-            Income
-          </span>
-        </a>
-        <a href="../Expenses Page/expenses.html">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v5h14v-5"/></svg>
-          </span>
-          <span>
-            Expenses
-          </span>
-        </a>
+
         <a href="../Pie Chart Page/spending-chart.html" aria-current="page">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3a8 8 0 0 1 6 6h-6z"/></svg>
@@ -123,7 +108,7 @@
             Pie Chart
           </h1>
           <p>
-            Separate breakdowns of this month’s income and expenses.
+            Manage deposits, expenses, categories, and history alongside your monthly charts.
           </p>
         </div>
         <div class="page-actions">
@@ -156,7 +141,17 @@
       <p class="notice">
         Your profile uses saved local data. No real banks or money transfers.
       </p>
-      <section class="two-column breakdown-grid" aria-label="Income and expense charts">
+      <section class="summary" aria-label="Budget Summary">
+<div><span>Income this Month</span><strong id="income-total"></strong></div>
+<div><span>Expenses this Month</span><strong id="expense-total"></strong></div>
+<div><span>Income Remaining · All Time</span><strong id="budget-net"></strong></div>
+</section>
+<div class="budget-actions" aria-label="Budget Actions">
+<button type="button" data-open="deposit-dialog">Add Deposit</button>
+<button type="button" data-open="expense-dialog">Add Expense</button>
+<button type="button" class="secondary" data-open="category-dialog">Create Category</button>
+</div>
+<section class="two-column breakdown-grid" aria-label="Income and expense charts">
         <article class="panel breakdown-panel">
           <h2>
             Income Breakdown
@@ -186,13 +181,41 @@
           </ul>
         </article>
       </section>
+<section class="two-column" aria-label="Entry History">
+<article class="panel" id="income-history"><h2>Deposit History · All Time</h2><ul id="income-history-list" class="payment-list"></ul></article>
+<article class="panel" id="expense-history"><h2>Expense History · All Time</h2><p class="small">Includes planned expenses, which stay out of spending totals.</p><ul id="expense-history-list" class="payment-list"></ul></article>
+</section>
       <footer>
         <button id="reset-demo" type="button" class="text-button">
-          Reset profile
+          Reset Profile
         </button>
       </footer>
       <p id="status" role="status" class="status">
       </p>
     </main>
+<dialog id="deposit-dialog" aria-labelledby="deposit-title"><form id="deposit-form">
+<h2 id="deposit-title">Add Deposit</h2>
+<label>Description<input id="deposit-name" maxlength="60" required></label>
+<label>Amount ($)<input id="deposit-amount" type="number" min="0.01" max="1000000000" step="0.01" required></label>
+<label>Date<input id="deposit-date" type="date" required></label>
+<label>Type<select id="deposit-kind"><option value="income">Deposit</option></select></label>
+<label>Category<select id="deposit-category" required></select></label>
+<div class="button-row"><button type="button" class="secondary" data-close>Cancel</button><button type="submit">Add Deposit</button></div>
+</form></dialog><dialog id="expense-dialog" aria-labelledby="expense-title"><form id="expense-form">
+<h2 id="expense-title">Add Expense</h2>
+<label>Description<input id="expense-name" maxlength="60" required></label>
+<label>Amount ($)<input id="expense-amount" type="number" min="0.01" max="1000000000" step="0.01" required></label>
+<label>Date<input id="expense-date" type="date" required></label>
+<label>Type<select id="expense-kind"><option value="purchase">Expense</option><option value="planned">Planned Expense</option></select></label>
+<label>Category<select id="expense-category" required></select></label>
+<div class="button-row"><button type="button" class="secondary" data-close>Cancel</button><button type="submit">Add Expense</button></div>
+</form></dialog><dialog id="category-dialog" aria-labelledby="category-title"><form id="category-form">
+<h2 id="category-title">Create Category</h2>
+<label>Category Name<input id="category-name" maxlength="40" required></label>
+<label>Category Type<select id="category-type"><option value="income">Deposit</option><option value="expense">Expense</option></select></label>
+<label>Chart Color<input id="category-color" type="color" value="#507a63"></label>
+<p id="category-status" class="error" role="status"></p>
+<div class="button-row"><button type="button" class="secondary" data-close>Cancel</button><button type="submit">Create Category</button></div>
+</form></dialog>
   </body>
 </html>
