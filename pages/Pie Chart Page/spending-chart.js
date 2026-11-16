@@ -25,7 +25,36 @@ function renderPiePage(){
     drawSpendingChart(getElement(type+'-donut'),totals,choose,{colors,selectedCategory:selected,independent:true,label:type==='income'?'Income by category':'Expenses by category'});
     getElement(type+'-chart-total').textContent=formatMoney(Object.values(totals).reduce((sum,amount)=>sum+amount,0))+' this month';
     getElement(type+'-chart-categories').replaceChildren(...chartCategories.map(category=>{
-      const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent=category.name+' · '+formatMoney(totals[category.name]);button.setAttribute('aria-pressed',String(category.name===selected));button.addEventListener('click',()=>choose(category.name));return button;
+      const row = document.createElement('div');
+      row.className = 'category-choice';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'secondary';
+      button.textContent = category.name + ' · ' + formatMoney(totals[category.name]);
+      button.setAttribute('aria-pressed', String(category.name === selected));
+      button.addEventListener('click', () => choose(category.name));
+      row.append(button);
+      if (BudgetMath.isCustomCategory(category)) {
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'text-button category-remove';
+        remove.textContent = '×';
+        remove.setAttribute('aria-label', 'Remove ' + category.name + ' ' + type + ' category');
+        remove.addEventListener('click', () => {
+          const fallback = type === 'income' ? 'Other Income' : 'Other';
+          const inUse = budgetData.events.some(event => event.category === category.name &&
+            (event.kind === 'income' ? 'income' : 'expense') === type);
+          const detail = inUse ? ' Entries in this category will move to ' + fallback + '.' : '';
+          if (!confirm('Remove “' + category.name + '”?' + detail)) return;
+          if (!BudgetMath.removeCategory(budgetData, category)) return;
+          if (type === 'income' && selectedIncomeCategory === category.name) selectedIncomeCategory = fallback;
+          if (type === 'expense' && selectedExpenseCategory === category.name) selectedExpenseCategory = fallback;
+          save('Category removed.' + detail);
+          getElement(type + '-chart-categories').querySelector('[aria-pressed="true"]')?.focus();
+        });
+        row.append(remove);
+      }
+      return row;
     }));
     showPurchases(type+'-category-items',budgetData.events.filter(event=>event.kind===(type==='income'?'income':'purchase')&&event.date.startsWith(currentMonth)&&event.category===selected));
   }

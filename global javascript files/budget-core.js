@@ -39,6 +39,27 @@
     if(budget.categories.length>=60)throw new Error('Keep at most 60 categories.');
     budget.categories.push({name,type,color});
   }
+  // Match built-in categories by name and type so older saved budgets work too.
+  function isCustomCategory(category) {
+    return !defaultCategories().some(builtIn => builtIn.name === category.name && builtIn.type === category.type);
+  }
+  function removeCategory(budget, category) {
+    const index = budget.categories.findIndex(item => item.name === category.name && item.type === category.type);
+    if (index < 0 || !isCustomCategory(budget.categories[index])) return false;
+
+    const fallback = defaultCategories().find(item => item.type === category.type &&
+      item.name === (category.type === 'income' ? 'Other Income' : 'Other'));
+    // Keep every entry valid, including planned expenses and entries from earlier months.
+    for (const event of budget.events) {
+      const type = event.kind === 'income' ? 'income' : 'expense';
+      if (event.category === category.name && type === category.type) event.category = fallback.name;
+    }
+    budget.categories.splice(index, 1);
+    if (!budget.categories.some(item => item.name === fallback.name && item.type === fallback.type)) {
+      budget.categories.push(fallback);
+    }
+    return true;
+  }
   function validateBudget(budget) {
     if(!budget||!Array.isArray(budget.categories)||!Array.isArray(budget.events)||!Array.isArray(budget.goals)||budget.categories.length>60||budget.events.length>2000||budget.goals.length>30)throw new Error('Invalid budget structure.');
     const validText=(value,max)=>typeof value==='string'&&value.trim().length>0&&value.length<=max;
@@ -57,7 +78,7 @@
     for(const goal of budget.goals){if(!validText(goal.id,100)||goalIds.has(goal.id)||!validText(goal.name,60)||!validAmount(goal.target)||(goal.dueDate&&!validDate(goal.dueDate)))throw new Error('Invalid goal.');goalIds.add(goal.id);}
     return true;
   }
-  const api={createBudget,totalIncome,totalExpenses,categoryTotals,goalProgress,addCategory,validateBudget};
+  const api={createBudget,totalIncome,totalExpenses,categoryTotals,goalProgress,addCategory,isCustomCategory,removeCategory,validateBudget};
   root.BudgetMath=api;
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(globalThis);

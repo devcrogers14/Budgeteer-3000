@@ -8,12 +8,27 @@
   const robot='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="5"/><path d="M12 6V3m-3 13h6"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/></svg>';
   const chatLauncher=document.createElement('button');chatLauncher.className='chat-launcher';chatLauncher.type='button';chatLauncher.setAttribute('aria-label','Chat with Budgetron');chatLauncher.setAttribute('aria-expanded','false');chatLauncher.setAttribute('aria-controls','budgetron-chat');chatLauncher.innerHTML=robot+'<span>Ask Budgetron</span>';
   const chatPanel=document.createElement('section');chatPanel.id='budgetron-chat';chatPanel.className='budgetron-chat';chatPanel.hidden=true;chatPanel.setAttribute('role','dialog');chatPanel.setAttribute('aria-labelledby','chat-title');
-  chatPanel.innerHTML=`<div class="chat-header"><span class="chat-avatar">${robot}</span><div><h2 id="chat-title">Budgetron AI</h2><p>Your app and budget guide</p></div><button type="button" class="text-button chat-close" aria-label="Close chat">×</button></div>
-    <div class="chat-toolbar"><span class="chat-provider">Powered by Gemini</span><button type="button" class="secondary chat-new" id="chat-new">New Chat</button></div>
-    <details class="chat-display-settings"><summary>Position &amp; visibility</summary><p>Drag Ask Budgetron anywhere. With the button focused, use Alt + arrow keys to move it.</p><label><input id="chat-home-only" type="checkbox"> Show only on Home</label><button type="button" class="text-button" id="chat-reset-position">Reset position</button><small>You can always change this setting from Home.</small></details>
+  chatPanel.innerHTML=`
+    <div class="chat-header">
+      <h2 id="chat-title">Budgetron AI</h2>
+      <div class="chat-actions">
+        <button type="button" class="text-button" id="chat-new">New chat</button>
+        <button type="button" class="text-button" id="chat-settings-toggle" aria-controls="chat-settings" aria-expanded="false">Settings</button>
+        <button type="button" class="text-button chat-close" aria-label="Close chat">×</button>
+      </div>
+    </div>
+    <div id="chat-settings" class="chat-display-settings" hidden>
+      <label><input id="chat-share-budget" type="checkbox" checked> Include my budget details</label>
+      <p>When enabled, budget details are sent to Gemini with your messages.</p>
+      <label><input id="chat-home-only" type="checkbox"> Show only on Home</label>
+      <button type="button" class="text-button" id="chat-reset-position">Reset launcher position</button>
+    </div>
     <div id="chat-messages" class="chat-messages" role="log" aria-label="Conversation with Budgetron" aria-live="polite" aria-relevant="additions"></div>
-    <div class="chat-composer"><p id="chat-connection" class="chat-connection" role="status"></p><label class="chat-share"><input id="chat-share-budget" type="checkbox" checked> Include my sample budget</label>
-    <form id="chat-form"><label class="sr-only" for="chat-input">Message Budgetron</label><textarea id="chat-input" rows="2" maxlength="2000" placeholder="Ask about this app or your demo budget…" required></textarea><button id="chat-send" type="submit" aria-label="Send message">↑</button></form><p class="chat-footnote">AI can make mistakes. Shared messages and sample budget data go to Google.</p></div>`;
+    <div class="chat-composer">
+      <p id="chat-connection" class="chat-connection" role="status"></p>
+      <form id="chat-form"><label class="sr-only" for="chat-input">Message Budgetron</label><textarea id="chat-input" rows="1" maxlength="2000" placeholder="Ask about your budget…" required></textarea><button id="chat-send" type="submit" aria-label="Send message">↑</button></form>
+      <p class="chat-footnote">Messages go to Gemini. Answers can be wrong.</p>
+    </div>`;
   document.body.append(chatLauncher,chatPanel);
   const messageList=chatPanel.querySelector('#chat-messages'),messageInput=chatPanel.querySelector('#chat-input'),sendButton=chatPanel.querySelector('#chat-send'),newChatButton=chatPanel.querySelector('#chat-new'),connectionStatus=chatPanel.querySelector('#chat-connection'),shareBudgetCheckbox=chatPanel.querySelector('#chat-share-budget');
   // Store display preferences separately from the budget, so resetting demo money keeps them.
@@ -153,15 +168,16 @@
     messageList.replaceChildren();
     if(!conversationHistory.length){
       const welcome=document.createElement('div');welcome.className='chat-welcome';
-      const title=document.createElement('h3');title.textContent='Your money. Your questions.';
-      const subtitle=document.createElement('p');subtitle.textContent='I help with this app and the budget you track here. Ask about spending, savings goals, accounts, or your calendar.';
-      welcome.append(title,subtitle);
-      for(const text of ['Do I have enough saved for an emergency?','Does my budget match my spending?','Am I spending more than I earn?','How can I reach my savings goal?','What payments do I have coming up?']){
-        const button=document.createElement('button');button.type='button';button.className='chat-suggestion secondary';
-        const spark=document.createElement('span');spark.className='chat-suggestion-spark';spark.textContent='✳';spark.setAttribute('aria-hidden','true');
-        const label=document.createElement('span');label.textContent=text;
-        const arrow=document.createElement('span');arrow.className='chat-suggestion-arrow';arrow.setAttribute('aria-hidden','true');arrow.innerHTML='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m8 5 5 5-5 5"/></svg>';
-        button.append(spark,label,arrow);button.addEventListener('click',()=>ask(text));welcome.append(button);
+      const prompt = document.createElement('p');
+      prompt.textContent = 'What would you like to know about your budget?';
+      welcome.append(prompt);
+      for (const question of ['Where is my money going?', 'How can I reach my savings goal?']) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'chat-suggestion secondary';
+        button.textContent = question;
+        button.addEventListener('click', () => ask(question));
+        welcome.append(button);
       }
       messageList.append(welcome);
     }else conversationHistory.forEach(item=>bubble(item.role,item.content));
@@ -196,7 +212,7 @@
       if(!response.ok || !response.headers.get('content-type')?.includes('application/json'))throw new Error('Not the Budgetron server');
       const state=await response.json();
       if(state.provider!=='Gemini' || typeof state.configured!=='boolean')throw new Error('Not the Budgetron server');
-      connectionStatus.textContent=state.configured?'AI is ready.':'Add your Gemini key to .env and save it. Then send your question again.';
+      connectionStatus.textContent=state.configured?'':'Add your Gemini key to .env and save it. Then send your question again.';
       return state.configured;
     }catch{
       showConnectionHelp('AI chat needs the Budgetron server. Run Start Budgetron.bat; VS Code Live Server and GitHub Pages cannot run the AI server.');return false;
@@ -217,7 +233,7 @@
       const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:requestHistory,budget:snapshot()}),signal:AbortSignal.timeout(55000)});
       const result=await response.json();if(!response.ok)throw new Error(result.error||'The AI is unavailable. Please try again.');
       if(typeof result.reply!=='string'||!result.reply.trim())throw new Error('No response received. Please try again.');
-      thinking.remove();bubble('assistant',result.reply);conversationHistory=[...requestHistory,{role:'assistant',content:result.reply}].slice(-14);persist();connectionStatus.textContent='AI is ready.';
+      thinking.remove();bubble('assistant',result.reply);conversationHistory=[...requestHistory,{role:'assistant',content:result.reply}].slice(-14);persist();connectionStatus.textContent='';
     }catch(error){
       thinking.remove();const item=document.createElement('div');item.className='chat-error';item.setAttribute('role','alert');
       const textNode=document.createElement('p');textNode.textContent=error.name==='TimeoutError'?'The AI took too long. Try again.':error.message;
@@ -227,13 +243,23 @@
   chatLauncher.addEventListener('click',()=>{
     if (suppressDragClick) return;
     chatPanel.hidden=!chatPanel.hidden;chatLauncher.setAttribute('aria-expanded',String(!chatPanel.hidden));
-    if(!chatPanel.hidden){placePanel();checkConnection();messageInput.focus({preventScroll:true});messageList.scrollTop=messageList.scrollHeight;}
+    if(!chatPanel.hidden){showSettings(false);placePanel();checkConnection();messageInput.focus({preventScroll:true});messageList.scrollTop=messageList.scrollHeight;}
   });
   chatPanel.querySelector('.chat-close').addEventListener('click',()=>{chatPanel.hidden=true;chatLauncher.setAttribute('aria-expanded','false');chatLauncher.focus({preventScroll:true});});
   chatPanel.addEventListener('keydown',(event)=>{if(event.key==='Escape'){chatPanel.hidden=true;chatLauncher.setAttribute('aria-expanded','false');chatLauncher.focus({preventScroll:true});}});
   chatPanel.querySelector('#chat-form').addEventListener('submit',(event)=>{event.preventDefault();ask(messageInput.value);});
   messageInput.addEventListener('keydown',(event)=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();ask(messageInput.value);}});
-  newChatButton.addEventListener('click',()=>{conversationHistory=[];persist();renderHistory();messageInput.focus();});
+  const settingsButton = chatPanel.querySelector('#chat-settings-toggle');
+  const settings = chatPanel.querySelector('#chat-settings');
+  function showSettings(open) {
+    settings.hidden = !open;
+    messageList.hidden = open;
+    chatPanel.querySelector('.chat-composer').hidden = open;
+    settingsButton.setAttribute('aria-expanded', String(open));
+    if (!open) messageList.scrollTop = messageList.scrollHeight;
+  }
+  settingsButton.addEventListener('click', () => showSettings(settings.hidden));
+  newChatButton.addEventListener('click',()=>{showSettings(false);conversationHistory=[];persist();renderHistory();messageInput.focus();});
   // Restore this profile's chat settings/history instead of inheriting another user's browser settings.
   window.addEventListener('budgetron:preferences',event=>{
     const preferences=event.detail;

@@ -54,3 +54,9 @@
 .chart-categories { grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
 .chart-categories button { font-size:16px; }
 .payment-title { flex-wrap:wrap; }
+
+/* Keep the remove control separate from the category selection button. */
+.category-choice { display:flex; min-width:0; align-items:center; gap:4px; }
+.category-choice > .secondary { flex:1; min-width:0; display:block; text-align:left; overflow-wrap:anywhere; }
+.chart-categories .category-remove { flex:0 0 auto; width:36px; min-height:36px; justify-content:center; padding:0; color:var(--error); font-size:22px; line-height:1; }
+@media(max-width:760px) { .chart-categories .category-remove { width:44px; min-height:44px; } }

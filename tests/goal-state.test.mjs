@@ -18,3 +18,21 @@ test('invalid category names and colors are rejected',()=>{const budget=demo();f
 test('transaction validation rejects negative, fractional and unsafe amounts',()=>{for(const amount of [-1,0,1.5,Number.MAX_SAFE_INTEGER]){const budget=demo();budget.events[0].amount=amount;assert.throws(()=>BudgetMath.validateBudget(budget));}});
 test('transaction validation rejects impossible dates and wrong category types',()=>{const budget=demo();budget.events[0].date='2026-02-30';assert.throws(()=>BudgetMath.validateBudget(budget));budget.events[0].date='2026-10-01';budget.events[0].category='Food';assert.throws(()=>BudgetMath.validateBudget(budget));});
 test('duplicate record IDs are rejected and valid demo data passes validation',()=>{const budget=demo();assert.equal(BudgetMath.validateBudget(budget),true);budget.events.push({...budget.events[0]});assert.throws(()=>BudgetMath.validateBudget(budget));});
+
+
+test('removing a custom expense category preserves recorded and planned entries', () => {
+  const budget = demo();
+  BudgetMath.addCategory(budget, 'Gifts', 'income');
+  BudgetMath.addCategory(budget, 'Gifts', 'expense');
+  budget.events[0].category = 'Gifts';
+  budget.events[2].category = 'Gifts';
+  budget.events[6].category = 'Gifts';
+  const expected = structuredClone(budget.events);
+  expected[2].category = 'Other';
+  expected[6].category = 'Other';
+
+  assert.equal(BudgetMath.removeCategory(budget, {name:'Gifts', type:'expense'}), true);
+  assert.deepEqual(budget.events, expected);
+  assert.equal(BudgetMath.removeCategory(budget, {name:'Other', type:'expense'}), false);
+  assert.equal(BudgetMath.validateBudget(budget), true);
+});
